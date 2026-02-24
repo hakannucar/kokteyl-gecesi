@@ -8,486 +8,114 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0b0b10;
-    --card: #13131a;
-    --card-hover: #1a1a23;
-    --gold: #d4a843;
-    --gold-light: #f0d78c;
-    --gold-dim: #8a7234;
-    --cream: #eae5da;
-    --cream-mid: #b5ad9e;
-    --cream-dim: #7a7468;
-    --wine: #7a2038;
-    --green: #4ade80;
-    --red: #ef5555;
-    --glow: rgba(212, 168, 67, 0.10);
-    --border: rgba(212, 168, 67, 0.07);
-    --border-h: rgba(212, 168, 67, 0.20);
-    --border-s: rgba(212, 168, 67, 0.50);
+    --bg:#0b0b10;--card:#13131a;--card-hover:#1a1a23;--gold:#d4a843;--gold-light:#f0d78c;
+    --gold-dim:#8a7234;--cream:#eae5da;--cream-mid:#b5ad9e;--cream-dim:#7a7468;--wine:#7a2038;
+    --green:#4ade80;--red:#ef5555;--glow:rgba(212,168,67,.10);--border:rgba(212,168,67,.07);
+    --border-h:rgba(212,168,67,.20);--border-s:rgba(212,168,67,.50);
   }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  html { font-size: 16px; }
-
-  body {
-    background: var(--bg);
-    color: var(--cream);
-    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 400;
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-    line-height: 1.5;
-  }
-
-  /* Subtle grain */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 100;
-  }
-
-  .ambient { position: fixed; border-radius: 50%; filter: blur(160px); pointer-events: none; z-index: 0; }
-  .amb-1 { width: 420px; height: 420px; top: -160px; left: -100px; background: var(--gold); opacity: 0.04; }
-  .amb-2 { width: 350px; height: 350px; bottom: -120px; right: -60px; background: var(--wine); opacity: 0.05; }
-
-  .page {
-    position: relative; z-index: 1;
-    width: 100%;
-    max-width: 440px;
-    margin: 0 auto;
-    padding: 32px 16px 100px;
-  }
-
-  /* ─── TYPOGRAPHY ─── */
-  .title {
-    font-family: 'DM Serif Display', serif;
-    color: var(--gold);
-    font-weight: 400;
-  }
-
-  /* ─── LOGIN ─── */
-  .login-screen {
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px 16px;
-  }
-
-  .login-box {
-    width: 100%;
-    max-width: 360px;
-    text-align: center;
-    animation: fadeIn 0.8s ease;
-  }
-
-  .login-icon { font-size: 44px; margin-bottom: 16px; display: block; }
-
-  .login-box h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 26px;
-    color: var(--gold);
-    margin-bottom: 6px;
-  }
-
-  .login-box .subtitle {
-    font-size: 15px;
-    color: var(--cream-dim);
-    margin-bottom: 32px;
-    line-height: 1.5;
-  }
-
-  .password-input {
-    width: 100%;
-    padding: 16px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    color: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: 5px;
-    text-align: center;
-    text-transform: uppercase;
-    outline: none;
-    transition: border-color 0.3s;
-    margin-bottom: 14px;
-  }
-  .password-input::placeholder {
-    letter-spacing: 1px;
-    font-size: 15px;
-    font-weight: 400;
-    color: var(--cream-dim);
-    opacity: 0.6;
-  }
-  .password-input:focus { border-color: var(--gold-dim); }
-
-  .btn-gold {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
-    border: none;
-    border-radius: 12px;
-    color: var(--bg);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: all 0.2s;
-    min-height: 52px;
-  }
-  .btn-gold:active { transform: scale(0.98); opacity: 0.9; }
-
-  .login-error {
-    margin-top: 14px;
-    font-size: 14px;
-    color: var(--red);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .login-error.show { opacity: 1; }
-
-  /* ─── VOTE ─── */
-  .vote-screen { display: none; }
-
-  .header {
-    text-align: center;
-    margin-bottom: 28px;
-    animation: fadeDown 0.7s ease;
-  }
-
-  .header-icon { font-size: 32px; margin-bottom: 8px; display: block; }
-
-  .greeting-banner {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--gold-light);
-    margin-bottom: 14px;
-    padding: 10px 16px;
-    background: rgba(212, 168, 67, 0.06);
-    border: 1px solid rgba(212, 168, 67, 0.12);
-    border-radius: 10px;
-    animation: fadeIn 0.8s ease 0.2s both;
-  }
-
-  .header h1 { font-size: 24px; line-height: 1.3; }
-  .header p { font-size: 15px; color: var(--cream-mid); margin-top: 8px; line-height: 1.55; }
-
-  .rule-badges {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 14px;
-    align-items: center;
-  }
-
-  .rule-badge {
-    display: inline-block;
-    padding: 8px 16px;
-    border: 1px solid var(--gold-dim);
-    border-radius: 100px;
-    font-size: 13px;
-    color: var(--gold-light);
-    font-weight: 500;
-  }
-
-  .hint-badge {
-    display: inline-block;
-    padding: 8px 16px;
-    border: 1px dashed var(--gold-dim);
-    border-radius: 100px;
-    font-size: 13px;
-    color: var(--gold);
-    font-weight: 400;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
-  }
-
-  .counter {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 15px;
-    color: var(--cream-dim);
-    font-weight: 400;
-  }
-  .counter .num { color: var(--gold); font-weight: 700; font-size: 20px; }
-  .counter.done .num { color: var(--green); }
-
-  /* ─── CARDS ─── */
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    position: relative;
-    animation: fadeUp 0.5s ease both;
-    min-height: 48px;
-  }
-  .card:nth-child(1) { animation-delay: 0.05s; }
-  .card:nth-child(2) { animation-delay: 0.10s; }
-  .card:nth-child(3) { animation-delay: 0.15s; }
-  .card:nth-child(4) { animation-delay: 0.20s; }
-  .card:nth-child(5) { animation-delay: 0.25s; }
-
-  .card:active { transform: scale(0.98); }
-
-  .card.selected {
-    border-color: var(--border-s);
-    background: linear-gradient(160deg, var(--card) 50%, rgba(212, 168, 67, 0.04) 100%);
-    box-shadow: 0 0 40px var(--glow);
-  }
-
-  .card.disabled { opacity: 0.25; pointer-events: none; }
-
-  .check {
-    position: absolute;
-    top: 16px; right: 16px;
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    border: 2px solid rgba(212, 168, 67, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s;
-    flex-shrink: 0;
-  }
-  .selected .check { background: var(--gold); border-color: var(--gold); }
-  .check svg { width: 14px; height: 14px; stroke: var(--bg); stroke-width: 3; fill: none; opacity: 0; transition: opacity 0.2s; }
-  .selected .check svg { opacity: 1; }
-
-  .card-name {
-    font-family: 'DM Serif Display', serif;
-    font-size: 21px;
-    color: var(--gold-light);
-    margin-bottom: 3px;
-    padding-right: 44px;
-    line-height: 1.3;
-  }
-
-  .card-vibe {
-    font-size: 12px;
-    color: var(--cream-dim);
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-
-  .ingredients { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-  .ing-tag {
-    padding: 6px 12px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 100px;
-    font-size: 13px;
-    color: var(--cream);
-    font-weight: 400;
-  }
-
-  .surprise-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-  .surprise-tag {
-    padding: 6px 12px;
-    background: rgba(212, 168, 67, 0.06);
-    border: 1px dashed var(--gold-dim);
-    border-radius: 100px;
-    font-size: 13px;
-    color: var(--gold);
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    min-height: 34px;
-    display: flex;
-    align-items: center;
-  }
-  .surprise-tag:active { background: rgba(212, 168, 67, 0.15); }
-  .surprise-tag.revealed { border-style: solid; background: rgba(212, 168, 67, 0.1); cursor: default; }
-
-  .garnish {
-    margin-top: 10px;
-    font-size: 13px;
-    color: var(--cream-dim);
-    font-style: italic;
-    opacity: 0.6;
-  }
-
-  /* ─── SUBMIT ─── */
-  .submit-wrap { margin-top: 28px; animation: fadeUp 0.5s ease 0.4s both; }
-
-  .submit-btn {
-    width: 100%;
-    padding: 18px;
-    background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 100%);
-    border: none;
-    border-radius: 14px;
-    color: var(--bg);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    opacity: 0.25;
-    pointer-events: none;
-    min-height: 56px;
-  }
-  .submit-btn.active { opacity: 1; pointer-events: auto; }
-  .submit-btn.active:active { transform: scale(0.98); }
-  .submit-btn.sending { opacity: 0.5; pointer-events: none; }
-
-  /* ─── SUCCESS ─── */
-  .success-screen {
-    display: none;
-    min-height: 100vh;
-    min-height: 100dvh;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 24px 16px;
-  }
-
-  .success-screen .icon { font-size: 56px; margin-bottom: 16px; display: block; animation: popIn 0.5s ease; }
-  .success-screen h1 { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--gold); margin-bottom: 10px; }
-  .success-screen p { font-size: 15px; color: var(--cream-mid); line-height: 1.6; }
-
-  .chosen-list { margin-top: 20px; text-align: left; max-width: 280px; margin-left: auto; margin-right: auto; }
-  .chosen-item {
-    padding: 12px 16px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 8px;
-    font-family: 'DM Serif Display', serif;
-    font-size: 17px;
-    color: var(--gold-light);
-  }
-
-  /* ─── QUIZ MODAL ─── */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 50;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-  }
-  .modal-overlay.show { display: flex; }
-
-  .modal {
-    background: var(--card);
-    border: 1px solid var(--border-h);
-    border-radius: 16px;
-    padding: 24px 20px;
-    max-width: 360px;
-    width: 100%;
-    text-align: center;
-    animation: fadeUp 0.3s ease;
-  }
-
-  .modal h3 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 20px;
-    color: var(--gold);
-    margin-bottom: 6px;
-  }
-
-  .modal .quiz-hint {
-    font-size: 13px;
-    color: var(--cream-dim);
-    margin-bottom: 16px;
-  }
-
-  .modal .quiz-q {
-    font-size: 16px;
-    color: var(--cream);
-    line-height: 1.55;
-    margin-bottom: 20px;
-    font-weight: 500;
-  }
-
-  .modal .quiz-input {
-    width: 100%;
-    padding: 14px 16px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
-    text-align: center;
-    outline: none;
-    margin-bottom: 12px;
-    transition: border-color 0.3s;
-    min-height: 48px;
-  }
-  .modal .quiz-input:focus { border-color: var(--gold-dim); }
-
-  .modal .quiz-submit {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
-    border: none;
-    border-radius: 10px;
-    color: var(--bg);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    min-height: 48px;
-  }
-  .modal .quiz-submit:active { opacity: 0.9; }
-
-  .modal .quiz-result {
-    margin-top: 16px;
-    font-size: 14px;
-    line-height: 1.5;
-    display: none;
-    font-weight: 500;
-  }
-  .modal .quiz-result.wrong { color: var(--red); display: block; }
-  .modal .quiz-result.busted { color: var(--gold); display: block; }
-
-  .modal .modal-close {
-    margin-top: 14px;
-    padding: 10px 24px;
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--cream-dim);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    min-height: 42px;
-  }
-  .modal .modal-close:active { opacity: 0.7; }
-
-  /* ─── ANIMATIONS ─── */
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
-  @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
-  .shake { animation: shake 0.4s ease; }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{font-size:16px}
+  body{background:var(--bg);color:var(--cream);font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-weight:400;min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.5}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:100}
+  .ambient{position:fixed;border-radius:50%;filter:blur(160px);pointer-events:none;z-index:0}
+  .amb-1{width:420px;height:420px;top:-160px;left:-100px;background:var(--gold);opacity:.04}
+  .amb-2{width:350px;height:350px;bottom:-120px;right:-60px;background:var(--wine);opacity:.05}
+  .page{position:relative;z-index:1;width:100%;max-width:440px;margin:0 auto;padding:32px 16px 100px}
+  .title{font-family:'DM Serif Display',serif;color:var(--gold);font-weight:400}
+  .login-screen{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+  .login-box{width:100%;max-width:360px;text-align:center;animation:fadeIn .8s ease}
+  .login-icon{font-size:44px;margin-bottom:16px;display:block}
+  .login-box h1{font-family:'DM Serif Display',serif;font-size:26px;color:var(--gold);margin-bottom:6px}
+  .login-box .subtitle{font-size:15px;color:var(--cream-dim);margin-bottom:32px;line-height:1.5}
+  .password-input{width:100%;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:20px;font-weight:600;letter-spacing:5px;text-align:center;text-transform:uppercase;outline:none;transition:border-color .3s;margin-bottom:14px}
+  .password-input::placeholder{letter-spacing:1px;font-size:15px;font-weight:400;color:var(--cream-dim);opacity:.6}
+  .password-input:focus{border-color:var(--gold-dim)}
+  .btn-gold{width:100%;padding:16px;background:linear-gradient(135deg,var(--gold-dim),var(--gold));border:none;border-radius:12px;color:var(--bg);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .2s;min-height:52px}
+  .btn-gold:active{transform:scale(.98);opacity:.9}
+  .login-error{margin-top:14px;font-size:14px;color:var(--red);opacity:0;transition:opacity .3s}
+  .login-error.show{opacity:1}
+  .vote-screen{display:none}
+  .header{text-align:center;margin-bottom:28px;animation:fadeDown .7s ease}
+  .header-icon{font-size:32px;margin-bottom:8px;display:block}
+  .greeting-banner{font-size:15px;font-weight:500;color:var(--gold-light);margin-bottom:14px;padding:10px 16px;background:rgba(212,168,67,.06);border:1px solid rgba(212,168,67,.12);border-radius:10px;animation:fadeIn .8s ease .2s both}
+  .header h1{font-size:24px;line-height:1.3}
+  .header p{font-size:15px;color:var(--cream-mid);margin-top:8px;line-height:1.55}
+  .rule-badges{display:flex;flex-direction:column;gap:8px;margin-top:14px;align-items:center}
+  .rule-badge{display:inline-block;padding:8px 16px;border:1px solid var(--gold-dim);border-radius:100px;font-size:13px;color:var(--gold-light);font-weight:500}
+  .hint-badge{display:inline-block;padding:8px 16px;border:1px dashed var(--gold-dim);border-radius:100px;font-size:13px;color:var(--gold);font-weight:400;animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.7}50%{opacity:1}}
+  .joke-btn-wrap{margin-top:14px;animation:fadeIn .6s ease .4s both}
+  .joke-btn{width:100%;padding:14px 16px;background:var(--card);border:1px solid var(--wine);border-radius:12px;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;min-height:48px}
+  .joke-btn:active{transform:scale(.98);background:var(--card-hover)}
+  .admin-bar{display:none;margin-top:14px;padding:10px 16px;background:rgba(212,168,67,.04);border:1px dashed var(--gold-dim);border-radius:10px;text-align:center}
+  .admin-bar.show{display:block}
+  .admin-bar label{font-size:13px;color:var(--cream-dim);margin-right:8px}
+  .admin-bar select{padding:8px 12px;background:var(--bg);border:1px solid var(--border-h);border-radius:8px;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:14px;outline:none}
+  .counter{text-align:center;margin-bottom:20px;font-size:15px;color:var(--cream-dim);font-weight:400}
+  .counter .num{color:var(--gold);font-weight:700;font-size:20px}
+  .counter.done .num{color:var(--green)}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;cursor:pointer;transition:all .25s ease;position:relative;animation:fadeUp .5s ease both;min-height:48px}
+  .card:nth-child(1){animation-delay:.05s}.card:nth-child(2){animation-delay:.10s}.card:nth-child(3){animation-delay:.15s}.card:nth-child(4){animation-delay:.20s}.card:nth-child(5){animation-delay:.25s}
+  .card:active{transform:scale(.98)}
+  .card.selected{border-color:var(--border-s);background:linear-gradient(160deg,var(--card) 50%,rgba(212,168,67,.04) 100%);box-shadow:0 0 40px var(--glow)}
+  .card.disabled{opacity:.25;pointer-events:none}
+  .check{position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:50%;border:2px solid rgba(212,168,67,.15);display:flex;align-items:center;justify-content:center;transition:all .25s}
+  .selected .check{background:var(--gold);border-color:var(--gold)}
+  .check svg{width:14px;height:14px;stroke:var(--bg);stroke-width:3;fill:none;opacity:0;transition:opacity .2s}
+  .selected .check svg{opacity:1}
+  .card-name{font-family:'DM Serif Display',serif;font-size:21px;color:var(--gold-light);margin-bottom:3px;padding-right:44px;line-height:1.3}
+  .card-vibe{font-size:12px;color:var(--cream-dim);text-transform:uppercase;letter-spacing:1.2px;font-weight:600;margin-bottom:12px}
+  .ingredients{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .ing-tag{padding:6px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:100px;font-size:13px;color:var(--cream)}
+  .surprise-tags{display:flex;gap:6px;flex-wrap:wrap}
+  .surprise-tag{padding:6px 12px;background:rgba(212,168,67,.06);border:1px dashed var(--gold-dim);border-radius:100px;font-size:13px;color:var(--gold);font-weight:500;cursor:pointer;transition:all .2s;min-height:34px;display:flex;align-items:center}
+  .surprise-tag:active{background:rgba(212,168,67,.15)}
+  .garnish{margin-top:10px;font-size:13px;color:var(--cream-dim);font-style:italic;opacity:.6}
+  .submit-wrap{margin-top:28px;animation:fadeUp .5s ease .4s both}
+  .submit-btn{width:100%;padding:18px;background:linear-gradient(135deg,var(--gold-dim) 0%,var(--gold) 100%);border:none;border-radius:14px;color:var(--bg);font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;opacity:.25;pointer-events:none;min-height:56px}
+  .submit-btn.active{opacity:1;pointer-events:auto}
+  .submit-btn.active:active{transform:scale(.98)}
+  .submit-btn.sending{opacity:.5;pointer-events:none}
+  .success-screen{display:none;min-height:100vh;min-height:100dvh;align-items:center;justify-content:center;text-align:center;padding:24px 16px}
+  .success-screen .icon{font-size:56px;margin-bottom:16px;display:block;animation:popIn .5s ease}
+  .success-screen h1{font-family:'DM Serif Display',serif;font-size:26px;color:var(--gold);margin-bottom:10px}
+  .success-screen p{font-size:15px;color:var(--cream-mid);line-height:1.6}
+  .chosen-list{margin-top:20px;text-align:left;max-width:280px;margin-left:auto;margin-right:auto}
+  .chosen-item{padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;font-family:'DM Serif Display',serif;font-size:17px;color:var(--gold-light)}
+  .modal-overlay,.confirm-overlay,.joke-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:50;align-items:center;justify-content:center;padding:16px}
+  .modal-overlay.show,.confirm-overlay.show,.joke-overlay.show{display:flex}
+  .confirm-overlay{z-index:55}
+  .joke-overlay{z-index:52}
+  .modal,.confirm-box,.joke-box{background:var(--card);border:1px solid var(--border-h);border-radius:16px;padding:24px 20px;max-width:360px;width:100%;text-align:center;animation:fadeUp .3s ease}
+  .confirm-box{padding:28px 20px}
+  .modal h3,.joke-box h3{font-family:'DM Serif Display',serif;font-size:20px;color:var(--gold);margin-bottom:6px}
+  .modal .quiz-hint{font-size:13px;color:var(--cream-dim);margin-bottom:16px}
+  .modal .quiz-q{font-size:16px;color:var(--cream);line-height:1.55;margin-bottom:20px;font-weight:500}
+  .modal .quiz-input{width:100%;padding:14px 16px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:16px;text-align:center;outline:none;margin-bottom:12px;min-height:48px}
+  .modal .quiz-input:focus{border-color:var(--gold-dim)}
+  .modal .quiz-submit{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold-dim),var(--gold));border:none;border-radius:10px;color:var(--bg);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;min-height:48px}
+  .modal .quiz-result{margin-top:16px;font-size:14px;line-height:1.5;display:none;font-weight:500}
+  .modal .quiz-result.wrong{color:var(--red);display:block}
+  .modal .quiz-result.busted{color:var(--gold);display:block}
+  .modal .modal-close,.joke-box .joke-close{margin-top:14px;padding:10px 24px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--cream-dim);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;min-height:42px}
+  .confirm-box .confirm-icon{font-size:36px;margin-bottom:12px;display:block}
+  .confirm-box .confirm-text{font-size:16px;color:var(--cream);line-height:1.6;margin-bottom:20px;font-weight:500}
+  .confirm-box .confirm-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--gold-dim),var(--gold));border:none;border-radius:12px;color:var(--bg);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;min-height:52px;margin-bottom:10px}
+  .confirm-box .confirm-cancel{width:100%;padding:14px;background:none;border:1px solid var(--border);border-radius:12px;color:var(--cream-dim);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;min-height:48px}
+  .joke-box h3{margin-bottom:12px}
+  .joke-box p{font-size:14px;color:var(--cream-mid);line-height:1.7;text-align:left;margin-bottom:16px}
+  .joke-box img{width:100%;border-radius:10px;margin-bottom:12px}
+  .joke-box .joke-title{font-size:16px;color:var(--green);font-weight:600;margin-bottom:12px}
+  #cameraVideo{width:100%;border-radius:10px;margin-bottom:12px;display:none}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes popIn{0%{transform:scale(.5);opacity:0}50%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+  .shake{animation:shake .4s ease}
 </style>
 </head>
 <body>
-
 <div class="ambient amb-1"></div>
 <div class="ambient amb-2"></div>
 
@@ -509,6 +137,17 @@
     <div class="header">
       <span class="header-icon">🍸</span>
       <div class="greeting-banner" id="greetingText"></div>
+      <div id="jokeBtnArea"></div>
+      <div class="admin-bar" id="adminBar">
+        <label>👁 Önizleme:</label>
+        <select id="adminSelect" onchange="adminPreview(this.value)">
+          <option value="">Kendi görünümüm</option>
+          <option value="ARAP">Uygur (ARAP)</option>
+          <option value="TAPULU">Ufuk (TAPULU)</option>
+          <option value="MDMA">A.H.T.T (MDMA)</option>
+          <option value="MGAVM">MTK (MGAVM)</option>
+        </select>
+      </div>
       <h1 class="title">Viski Gecesi Menüsü</h1>
       <p>Bu sefer viski bazlı 5 kokteyl hazırladım. En beğendiğin 3 tanesini seç!</p>
       <div class="rule-badges">
@@ -516,7 +155,6 @@
         <span class="hint-badge">👆 Sürprizlere dokun, soruyu bil, malzemeyi öğren!</span>
       </div>
     </div>
-
     <div class="counter" id="counter"><span class="num" id="countNum">0</span> / 3 seçildi</div>
     <div id="cardList"></div>
     <div class="submit-wrap">
@@ -535,6 +173,28 @@
   </div>
 </div>
 
+<!-- CONFIRM MODAL -->
+<div class="confirm-overlay" id="confirmModal">
+  <div class="confirm-box">
+    <span class="confirm-icon" id="confirmIcon"></span>
+    <p class="confirm-text" id="confirmText"></p>
+    <video id="cameraVideo" autoplay playsinline muted></video>
+    <button class="confirm-btn" id="confirmBtn"></button>
+    <button class="confirm-cancel" onclick="closeConfirm()">Vazgeç</button>
+  </div>
+</div>
+
+<!-- JOKE POPUP -->
+<div class="joke-overlay" id="jokeModal">
+  <div class="joke-box">
+    <h3 id="jokeTitle"></h3>
+    <p id="jokeContent"></p>
+    <img id="jokeImg" style="display:none">
+    <div id="jokeTitleText" class="joke-title" style="display:none"></div>
+    <button class="joke-close" onclick="document.getElementById('jokeModal').classList.remove('show')">Kapat</button>
+  </div>
+</div>
+
 <!-- QUIZ MODAL -->
 <div class="modal-overlay" id="quizModal">
   <div class="modal">
@@ -550,261 +210,224 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
-// ════════════════════════════════════
-// ⚙️ EMAILJS
-// ════════════════════════════════════
-const EMAILJS_PUBLIC_KEY  = 'DDJeUgA08efhrrIPp';
-const EMAILJS_SERVICE_ID  = 'service_vkb7jry';
-const EMAILJS_TEMPLATE_ID = 'template_cohm3z2';
+const EMAILJS_PUBLIC_KEY='DDJeUgA08efhrrIPp';
+const EMAILJS_SERVICE_ID='service_vkb7jry';
+const EMAILJS_TEMPLATE_ID='template_cohm3z2';
+const IMGBB_API_KEY='44ab2a4be03540de597daba44674eee4';
 
-// ════════════════════════════════════
-// 🔐 ŞİFRELER
-// ════════════════════════════════════
-const PASSWORDS = {
-  'ARAP':     { name: 'Uygur',   greeting: 'Hoş geldin Uygur Bey, buyur içeri 🎩', admin: false },
-  'TAPULU':   { name: 'Ufuk',    greeting: 'Hoş geldin Ufuk Bey, seni bekliyorduk 🥂', admin: false },
-  'MDMA':     { name: 'A.H.T.T', greeting: 'Hoş geldin A.H.T.T, bar sana açık 🍸', admin: false },
-  'MGAVM':    { name: 'MTK',     greeting: 'Hoş geldin MTK, gecenin yıldızı sensin ✨', admin: false },
-  'NAMUSSUZ': { name: 'Patron',  greeting: 'Hoş geldin Patron, sistem senin emrinde 🔧', admin: true }
+const PASSWORDS={
+  'ARAP':{name:'Uygur',greeting:'Hoş geldiniz AQ uyguru, buyrun içeri, size özel tarihsel bilgileri almayı unutmayınız 🎩',admin:false},
+  'TAPULU':{name:'Ufuk',greeting:'Hoş geldiniz Ufuk DOST, tapunuzu almayı unutmayınız 🥂',admin:false},
+  'MDMA':{name:'A.H.T.T',greeting:'Hoş geldin A.H.T.T, kündeni atmayı unutma 🍸',admin:false},
+  'MGAVM':{name:'MTK',greeting:'Hoş geldiniz MTK Bey, gecenin yıldızı sizsiniz. Elma çekirdeğinizi almayı unutmayınız. ✨',admin:false},
+  'NAMUSSUZ':{name:'Patron',greeting:'Hoş geldin Patron, sistem senin emrinde 🔧',admin:true}
 };
 
-function getUsed() {
-  try { return JSON.parse(localStorage.getItem('kg_used') || '[]'); }
-  catch { return []; }
-}
-function setUsed(p) {
-  const u = getUsed();
-  if (!u.includes(p)) { u.push(p); localStorage.setItem('kg_used', JSON.stringify(u)); }
-}
+const JOKE_BUTTONS={
+  'ARAP':{label:'📜 Araplara Özel Bilgiler',type:'popup',title:'Araplara Özel Tarihsel Bilgiler',content:'Arap uygarlığı, M.Ö. 3. yüzyıldan itibaren Arap Yarımadası\'nda gelişmiş köklü bir medeniyettir. Nabatlılar Petra\'yı inşa ederek ticaret yollarının hakimi olmuş, 8. yüzyılda Abbasi Halifeliği döneminde Bağdat dünyanın en büyük bilim ve kültür merkezi haline gelmiştir. Cebir, algoritma, optik ve tıp alanlarında çığır açan çalışmalar bu dönemde yapılmıştır. İbn-i Sina\'nın Kanun fi\'t-Tıb eseri yüzyıllarca Avrupa\'da ders kitabı olarak kullanılmıştır.\n\nNot: Bu bilgiler tamamen gerçektir ve hiçbir şekilde şaka değildir. İyi oylamalar Uygur Bey. 🎩'},
+  'TAPULU':{label:'📋 Tapumu Al',type:'download',url:'https://enyenikonutprojeleri.com/wp-content/uploads/2024/08/tapu-kayit-ornegi-835x467.jpg'},
+  'MDMA':{label:'🔥 Haftalık Kündemi At',type:'image_popup',title:'Haftalık Kündeniz Tamamlandı ✅',img:'https://image.milimaj.com/i/milliyet/75/869x477/6312007e86b245372450d0af.jpg'},
+  'MGAVM':{label:'🍎 Elma Çekirdeğimi Al',type:'download',url:'https://image.hurimg.com/i/hurriyet/90/0x0/607029b07152d823d02c0cc1.jpg'}
+};
 
-let currentVoter = '';
-let currentPass = '';
-let isAdmin = false;
+function getUsed(){try{return JSON.parse(localStorage.getItem('kg_used')||'[]')}catch{return[]}}
+function setUsed(p){const u=getUsed();if(!u.includes(p)){u.push(p);localStorage.setItem('kg_used',JSON.stringify(u))}}
 
-// ════════════════════════════════════
-// 🍸 KOKTEYLler
-// ════════════════════════════════════
-const BUSTED = 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖';
+let currentVoter='',currentPass='',isAdmin=false;
 
-const cocktails = [
-  {
-    id: 'haysiyetsiz', name: 'Haysiyetsiz',
-    vibe: 'Dumanlı · Tatlı · Otsu',
-    visible: ['Közlenmiş pırasa', 'Bal', 'Limon', 'Soda'],
-    secrets: ['Armut', 'Adaçayı'],
-    garnish: 'Közlenmiş pırasa halkası & armut dilimi ile servis edilir',
-    questions: [
-      { q: 'Fermat\'ın Son Teoremi\'ni kanıtlayan matematikçinin soyadı nedir?', a: 'wiles' },
-      { q: 'Riemann Hipotezi hangi matematik dalıyla ilgilidir: Cebir, Analiz, Topoloji?', a: 'analiz' }
-    ]
-  },
-  {
-    id: 'edepsiz', name: 'Edepsiz',
-    vibe: 'Baharatlı · Ekşi · Cesur',
-    visible: ['Közlenmiş kırmızı biber', 'Bal', 'Limon', 'Soda'],
-    secrets: ['Zencefil', 'Nar'],
-    garnish: 'Biber dilimi & limon kabuğu ile servis edilir',
-    questions: [
-      { q: 'Poincaré Varsayımı\'nı kanıtlayıp Fields Madalyası\'nı reddeden matematikçinin soyadı?', a: 'perelman' },
-      { q: 'Hilbert\'in 1900\'de sunduğu ünlü çözülmemiş problemler listesinde kaç problem vardı?', a: '23' }
-    ]
-  },
-  {
-    id: 'yuzsuz', name: 'Yüzsüz',
-    vibe: 'Kremamsı · Sıcak · Yoğun',
-    visible: ['Tahin', 'Bal', 'Limon'],
-    secrets: ['Muz', 'Tarçın'],
-    garnish: 'Tahin çizgisi & bal damlası ile servis edilir',
-    questions: [
-      { q: 'Gödel\'in Eksiklik Teoremi hangi alanda devrim yarattı: Geometri, Mantık, İstatistik?', a: 'mantık' },
-      { q: 'Collatz Varsayımı\'nda başlangıç sayısı tek ise ne yapılır: 3n+1 mi, 2n+1 mi?', a: '3n+1' }
-    ]
-  },
-  {
-    id: 'arsiz', name: 'Arsız',
-    vibe: 'Toprak · Ekşi · Dumanlı',
-    visible: ['Pancar', 'Portakal', 'Limon', 'Soda'],
-    secrets: ['Yakılmış biberiye', 'Akçaağaç şurubu'],
-    garnish: 'Portakal dilimi & pancar şeridi ile servis edilir',
-    questions: [
-      { q: 'Dört Renk Teoremi\'ne göre herhangi bir harita en az kaç renkle boyanabilir?', a: '4' },
-      { q: 'Cantor\'un çaprazlama kanıtı neyin sayılamaz olduğunu gösterir: Rasyonel sayılar mı, Reel sayılar mı?', a: 'reel' }
-    ]
-  },
-  {
-    id: 'terbiyesiz', name: 'Terbiyesiz',
-    vibe: 'Kremamsı · Taze · Meyveli',
-    visible: ['Avokado', 'Böğürtlen', 'Limon', 'Soda'],
-    secrets: ['Nane', 'Bal'],
-    garnish: 'Böğürtlen & limon kabuğu ile servis edilir',
-    questions: [
-      { q: 'P vs NP problemi hangi alanın en büyük açık sorusudur: Fizik, Bilgisayar Bilimi, Biyoloji?', a: 'bilgisayar' },
-      { q: 'Nash Dengesi hangi alanla ilgilidir: Oyun Teorisi, Kaos Teorisi, Küme Teorisi?', a: 'oyun' }
-    ]
-  }
+const BUSTED='Aynen kanka cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖';
+
+const cocktails=[
+  {id:'haysiyetsiz',name:'Haysiyetsiz',vibe:'Dumanlı · Tatlı · Otsu',visible:['Közlenmiş pırasa','Bal','Limon','Soda'],secrets:['Armut','Adaçayı'],garnish:'Közlenmiş pırasa halkası & armut dilimi ile servis edilir',questions:[{q:'Fermat\'ın Son Teoremi\'ni kanıtlayan matematikçinin soyadı nedir?',a:'wiles'},{q:'Riemann Hipotezi hangi matematik dalıyla ilgilidir?',a:'analiz'}]},
+  {id:'edepsiz',name:'Edepsiz',vibe:'Baharatlı · Ekşi · Cesur',visible:['Közlenmiş kırmızı biber','Bal','Limon','Soda'],secrets:['Zencefil','Nar'],garnish:'Biber dilimi & limon kabuğu ile servis edilir',questions:[{q:'Poincaré Varsayımı\'nı kanıtlayıp Fields Madalyası\'nı reddeden matematikçinin soyadı nedir?',a:'perelman'},{q:'Hilbert\'in 1900\'de sunduğu ünlü çözülmemiş problemler listesinde kaç problem vardı?',a:'23'}]},
+  {id:'yuzsuz',name:'Yüzsüz',vibe:'Kremamsı · Sıcak · Yoğun',visible:['Tahin','Bal','Limon'],secrets:['Muz','Tarçın'],garnish:'Tahin çizgisi & bal damlası ile servis edilir',questions:[{q:'Gödel\'in Eksiklik Teoremi hangi alanda devrim yarattı?',a:'mantık'},{q:'Collatz Varsayımı\'nda başlangıç sayısı tek ise hangi işlem yapılır?',a:'3n+1'}]},
+  {id:'arsiz',name:'Arsız',vibe:'Toprak · Ekşi · Dumanlı',visible:['Pancar','Portakal','Limon','Soda'],secrets:['Yakılmış biberiye','Akçaağaç şurubu'],garnish:'Portakal dilimi & pancar şeridi ile servis edilir',questions:[{q:'Dört Renk Teoremi\'ne göre herhangi bir harita en az kaç renkle boyanabilir?',a:'4'},{q:'Cantor\'un çaprazlama kanıtı neyin sayılamaz olduğunu gösterir?',a:'reel'}]},
+  {id:'terbiyesiz',name:'Terbiyesiz',vibe:'Kremamsı · Taze · Meyveli',visible:['Avokado','Böğürtlen','Limon','Soda'],secrets:['Nane','Bal'],garnish:'Böğürtlen & limon kabuğu ile servis edilir',questions:[{q:'P vs NP problemi hangi bilim dalının en büyük açık sorusudur?',a:'bilgisayar'},{q:'Nash Dengesi hangi teoriyle ilgilidir?',a:'oyun'}]}
 ];
 
-// ════════════════════════════════════
 // LOGIN
-// ════════════════════════════════════
-const passInput = document.getElementById('passInput');
-passInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+const passInput=document.getElementById('passInput');
+passInput.addEventListener('keydown',e=>{if(e.key==='Enter')handleLogin()});
 
-function handleLogin() {
-  const val = passInput.value.trim().toUpperCase();
-  const err = document.getElementById('loginError');
-
-  if (!PASSWORDS[val]) {
-    err.textContent = 'Geçersiz şifre';
-    err.classList.add('show');
-    passInput.classList.add('shake');
-    setTimeout(() => passInput.classList.remove('shake'), 400);
-    return;
-  }
-
-  const pw = PASSWORDS[val];
-
-  if (!pw.admin && getUsed().includes(val)) {
-    err.textContent = 'Bu şifre zaten kullanıldı. Çakallık mı yapıyorsun? 🧐';
-    err.classList.add('show');
-    passInput.classList.add('shake');
-    setTimeout(() => passInput.classList.remove('shake'), 400);
-    return;
-  }
-
-  currentVoter = pw.name;
-  currentPass = val;
-  isAdmin = pw.admin;
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('voteScreen').style.display = 'block';
-  document.getElementById('greetingText').textContent = pw.greeting;
+function handleLogin(){
+  const val=passInput.value.trim().toUpperCase();
+  const err=document.getElementById('loginError');
+  if(!PASSWORDS[val]){err.textContent='Geçersiz şifre';err.classList.add('show');passInput.classList.add('shake');setTimeout(()=>passInput.classList.remove('shake'),400);return}
+  const pw=PASSWORDS[val];
+  if(!pw.admin&&getUsed().includes(val)){err.textContent='Bu şifre zaten kullanıldı. Çakallık mı yapıyorsun? 🧐';err.classList.add('show');passInput.classList.add('shake');setTimeout(()=>passInput.classList.remove('shake'),400);return}
+  currentVoter=pw.name;currentPass=val;isAdmin=pw.admin;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('voteScreen').style.display='block';
+  document.getElementById('greetingText').textContent=pw.greeting;
+  if(isAdmin)document.getElementById('adminBar').classList.add('show');
+  showJokeButton(val);
   renderCards();
 }
 
-// ════════════════════════════════════
-// CARDS
-// ════════════════════════════════════
-let selected = new Set();
-const MAX = 3;
+// JOKE BUTTONS
+function showJokeButton(pass){
+  const area=document.getElementById('jokeBtnArea');
+  area.innerHTML='';
+  const joke=JOKE_BUTTONS[pass];
+  if(!joke)return;
+  const wrap=document.createElement('div');wrap.className='joke-btn-wrap';
+  const btn=document.createElement('button');btn.className='joke-btn';btn.textContent=joke.label;
+  btn.onclick=()=>handleJoke(joke);
+  wrap.appendChild(btn);area.appendChild(wrap);
+}
 
-function renderCards() {
-  document.getElementById('cardList').innerHTML = cocktails.map(c => `
+function handleJoke(joke){
+  if(joke.type==='popup'){
+    document.getElementById('jokeTitle').textContent=joke.title;
+    document.getElementById('jokeContent').textContent=joke.content;
+    document.getElementById('jokeImg').style.display='none';
+    document.getElementById('jokeTitleText').style.display='none';
+    document.getElementById('jokeModal').classList.add('show');
+  }else if(joke.type==='download'){
+    const a=document.createElement('a');a.href=joke.url;a.download='';a.target='_blank';a.click();
+  }else if(joke.type==='image_popup'){
+    document.getElementById('jokeTitle').textContent='';
+    document.getElementById('jokeContent').textContent='';
+    const img=document.getElementById('jokeImg');img.src=joke.img;img.style.display='block';
+    const t=document.getElementById('jokeTitleText');t.textContent=joke.title;t.style.display='block';
+    document.getElementById('jokeModal').classList.add('show');
+  }
+}
+
+// ADMIN PREVIEW
+function adminPreview(pass){
+  const area=document.getElementById('jokeBtnArea');
+  if(!pass){showJokeButton('NAMUSSUZ');document.getElementById('greetingText').textContent=PASSWORDS['NAMUSSUZ'].greeting;return}
+  document.getElementById('greetingText').textContent=PASSWORDS[pass].greeting;
+  showJokeButton(pass);
+}
+
+// CARDS
+let selected=new Set();const MAX=3;
+function renderCards(){
+  document.getElementById('cardList').innerHTML=cocktails.map(c=>`
     <div class="card" id="card-${c.id}" onclick="toggle('${c.id}')">
       <div class="check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></div>
       <div class="card-name">${c.name}</div>
       <div class="card-vibe">${c.vibe}</div>
-      <div class="ingredients">${c.visible.map(v => `<span class="ing-tag">${v}</span>`).join('')}</div>
+      <div class="ingredients">${c.visible.map(v=>`<span class="ing-tag">${v}</span>`).join('')}</div>
       <div class="surprise-tags">
-        <span class="surprise-tag" id="s-${c.id}-0" onclick="event.stopPropagation(); openQuiz('${c.id}', 0)">🔒 Sürpriz #1</span>
-        <span class="surprise-tag" id="s-${c.id}-1" onclick="event.stopPropagation(); openQuiz('${c.id}', 1)">🔒 Sürpriz #2</span>
+        <span class="surprise-tag" id="s-${c.id}-0" onclick="event.stopPropagation();openQuiz('${c.id}',0)">🔒 Sürpriz #1</span>
+        <span class="surprise-tag" id="s-${c.id}-1" onclick="event.stopPropagation();openQuiz('${c.id}',1)">🔒 Sürpriz #2</span>
       </div>
       <div class="garnish">${c.garnish}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-// ════════════════════════════════════
-// 🧮 MATEMATİK QUIZ
-// ════════════════════════════════════
-let currentQuizCocktail = null;
-let currentQuizIndex = null;
-
-function openQuiz(cocktailId, surpriseIndex) {
-  const tag = document.getElementById(`s-${cocktailId}-${surpriseIndex}`);
-  if (tag.classList.contains('revealed')) return;
-
-  const c = cocktails.find(x => x.id === cocktailId);
-  currentQuizCocktail = cocktailId;
-  currentQuizIndex = surpriseIndex;
-
-  document.getElementById('quizQuestion').textContent = c.questions[surpriseIndex].q;
-  document.getElementById('quizInput').value = '';
-  const result = document.getElementById('quizResult');
-  result.className = 'quiz-result';
-  result.textContent = '';
+// QUIZ
+let currentQuizCocktail=null,currentQuizIndex=null;
+function openQuiz(cid,si){
+  const tag=document.getElementById(`s-${cid}-${si}`);if(tag.classList.contains('revealed'))return;
+  const c=cocktails.find(x=>x.id===cid);currentQuizCocktail=cid;currentQuizIndex=si;
+  document.getElementById('quizQuestion').textContent=c.questions[si].q;
+  document.getElementById('quizInput').value='';
+  const r=document.getElementById('quizResult');r.className='quiz-result';r.textContent='';
   document.getElementById('quizModal').classList.add('show');
-  setTimeout(() => document.getElementById('quizInput').focus(), 150);
+  setTimeout(()=>document.getElementById('quizInput').focus(),150);
 }
-
-function checkQuiz() {
-  const c = cocktails.find(x => x.id === currentQuizCocktail);
-  const q = c.questions[currentQuizIndex];
-  const answer = document.getElementById('quizInput').value.trim().toLowerCase();
-  const result = document.getElementById('quizResult');
-
-  if (!answer) return;
-
-  if (answer.includes(q.a.toLowerCase())) {
-    result.textContent = BUSTED;
-    result.className = 'quiz-result busted';
-  } else {
-    result.textContent = 'Yanlış cevap! Sürpriz malzeme gizli kalıyor 🤷';
-    result.className = 'quiz-result wrong';
-  }
+function checkQuiz(){
+  const c=cocktails.find(x=>x.id===currentQuizCocktail);const q=c.questions[currentQuizIndex];
+  const answer=document.getElementById('quizInput').value.trim().toLowerCase();
+  const result=document.getElementById('quizResult');if(!answer)return;
+  if(answer.includes(q.a.toLowerCase())){result.textContent=BUSTED;result.className='quiz-result busted'}
+  else{result.textContent='Yanlış cevap! Sürpriz malzeme gizli kalıyor 🤷';result.className='quiz-result wrong'}
 }
+function closeQuiz(){document.getElementById('quizModal').classList.remove('show');currentQuizCocktail=null;currentQuizIndex=null}
+document.getElementById('quizInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkQuiz()});
 
-function closeQuiz() {
-  document.getElementById('quizModal').classList.remove('show');
-  currentQuizCocktail = null;
-  currentQuizIndex = null;
-}
-
-document.getElementById('quizInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkQuiz(); });
-
-// ════════════════════════════════════
 // SELECTION
-// ════════════════════════════════════
-function toggle(id) {
-  if (selected.has(id)) selected.delete(id);
-  else if (selected.size < MAX) selected.add(id);
-  updateUI();
+function toggle(id){if(selected.has(id))selected.delete(id);else if(selected.size<MAX)selected.add(id);updateUI()}
+function updateUI(){
+  const n=selected.size;document.getElementById('countNum').textContent=n;
+  document.getElementById('counter').classList.toggle('done',n===MAX);
+  cocktails.forEach(c=>{const el=document.getElementById(`card-${c.id}`);const s=selected.has(c.id);el.classList.toggle('selected',s);el.classList.toggle('disabled',!s&&n>=MAX)});
+  document.getElementById('submitBtn').classList.toggle('active',n===MAX);
 }
 
-function updateUI() {
-  const n = selected.size;
-  document.getElementById('countNum').textContent = n;
-  document.getElementById('counter').classList.toggle('done', n === MAX);
-  cocktails.forEach(c => {
-    const el = document.getElementById(`card-${c.id}`);
-    const s = selected.has(c.id);
-    el.classList.toggle('selected', s);
-    el.classList.toggle('disabled', !s && n >= MAX);
-  });
-  document.getElementById('submitBtn').classList.toggle('active', n === MAX);
-}
+// SUBMIT + 4-STEP CONFIRM (last step = camera)
+const confirmSteps=[
+  {icon:'🤔',text:'Emin misin? Samimi söylüyorum şifren tek kullanımlık. Gönderdiğin bu işin dönüşü yok.',btn:'Tamam',camera:false},
+  {icon:'😳',text:'Harbi söylüyorum oğlum şakası bir yana, gönderdiğin an tüm cuma gecesinin kaderini belirliyorsun. Herkes senin seçimlerine göre içecek.',btn:'Anladık',camera:false},
+  {icon:'🫡',text:'Baak? Bu seçimlerle yaşayabilecek misin? Pişman olmak yok bak.',btn:'Tamam olm tamam',camera:false},
+  {icon:'📸',text:'Kanka son valla. Bir anlık alabilir miyiz?',btn:'Tamam çek',camera:true}
+];
+let confirmStep=0,cameraStream=null;
 
-// ════════════════════════════════════
-// SUBMIT
-// ════════════════════════════════════
-async function handleSubmit() {
-  if (selected.size !== MAX) return;
-  const btn = document.getElementById('submitBtn');
-  btn.textContent = 'GÖNDERİLİYOR...';
-  btn.classList.add('sending');
+function handleSubmit(){if(selected.size!==MAX)return;confirmStep=0;showConfirmStep()}
 
-  const choices = [...selected].map(id => cocktails.find(c => c.id === id).name);
-  const now = new Date().toLocaleString('tr-TR');
-
-  try {
-    emailjs.init(EMAILJS_PUBLIC_KEY);
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-      voter: currentVoter,
-      choices: choices.join(', '),
-      time: now
-    });
-  } catch (e) {
-    console.error('EmailJS error:', e);
+function showConfirmStep(){
+  const step=confirmSteps[confirmStep];
+  document.getElementById('confirmIcon').textContent=step.icon;
+  document.getElementById('confirmText').textContent=step.text;
+  const btn=document.getElementById('confirmBtn');btn.textContent=step.btn;
+  const vid=document.getElementById('cameraVideo');
+  if(step.camera){
+    vid.style.display='block';
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false}).then(stream=>{cameraStream=stream;vid.srcObject=stream}).catch(()=>{vid.style.display='none'});
+    btn.onclick=takePhotoAndSubmit;
+  }else{
+    vid.style.display='none';if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}
+    btn.onclick=nextConfirmStep;
   }
+  document.getElementById('confirmModal').classList.add('show');
+}
 
-  if (!isAdmin) setUsed(currentPass);
+function nextConfirmStep(){
+  confirmStep++;
+  if(confirmStep>=confirmSteps.length){document.getElementById('confirmModal').classList.remove('show');doSubmit()}
+  else{const box=document.querySelector('.confirm-box');box.style.animation='none';box.offsetHeight;box.style.animation='fadeUp .3s ease';showConfirmStep()}
+}
+
+function closeConfirm(){
+  document.getElementById('confirmModal').classList.remove('show');confirmStep=0;
+  if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}
+  document.getElementById('cameraVideo').style.display='none';
+}
+
+async function takePhotoAndSubmit(){
+  const vid=document.getElementById('cameraVideo');
+  const canvas=document.createElement('canvas');
+  canvas.width=vid.videoWidth||640;canvas.height=vid.videoHeight||480;
+  canvas.getContext('2d').drawImage(vid,0,0);
+  if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}
+  vid.style.display='none';
+  const base64=canvas.toDataURL('image/jpeg',0.6).split(',')[1];
+  document.getElementById('confirmText').textContent='📸 Fotoğraf çekildi! Gönderiliyor...';
+  document.getElementById('confirmBtn').style.display='none';
+  let photoUrl='Fotoğraf yüklenemedi';
+  try{
+    const form=new FormData();form.append('image',base64);
+    const resp=await fetch('https://api.imgbb.com/1/upload?key='+IMGBB_API_KEY,{method:'POST',body:form});
+    const data=await resp.json();
+    if(data.success)photoUrl=data.data.url;
+  }catch(e){console.error('imgbb error:',e)}
+  document.getElementById('confirmModal').classList.remove('show');
+  document.getElementById('confirmBtn').style.display='';
+  await doSubmit(photoUrl);
+}
+
+async function doSubmit(photoUrl){
+  const btn=document.getElementById('submitBtn');btn.textContent='GÖNDERİLİYOR...';btn.classList.add('sending');
+  const choices=[...selected].map(id=>cocktails.find(c=>c.id===id).name);
+  const now=new Date().toLocaleString('tr-TR');
+  const msg=photoUrl?choices.join(', ')+' | 📸 '+photoUrl:choices.join(', ');
+  try{
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+    await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{voter:currentVoter,choices:msg,time:now});
+  }catch(e){console.error('EmailJS error:',e)}
+  if(!isAdmin)setUsed(currentPass);
   showSuccess(choices);
 }
 
-function showSuccess(choices) {
-  document.getElementById('voteScreen').style.display = 'none';
-  const ss = document.getElementById('successScreen');
-  ss.style.display = 'flex';
-  document.getElementById('chosenList').innerHTML = choices.map(n => `<div class="chosen-item">🍸 ${n}</div>`).join('');
+function showSuccess(choices){
+  document.getElementById('voteScreen').style.display='none';
+  const ss=document.getElementById('successScreen');ss.style.display='flex';
+  document.getElementById('chosenList').innerHTML=choices.map(n=>`<div class="chosen-item">🍸 ${n}</div>`).join('');
 }
 </script>
 </body>
