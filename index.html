@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kokteyl Gecesi — Oyunu Sen Belirle</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #08080d;
+    --bg-card: #111118;
+    --bg-card-hover: #18181f;
+    --gold: #c9a84c;
+    --gold-light: #e8d48b;
+    --gold-dim: #7a6830;
+    --cream: #f0ebe0;
+    --cream-dim: #8a8275;
+    --wine: #7a2038;
+    --selected-glow: rgba(201, 168, 76, 0.12);
+    --border-subtle: rgba(201, 168, 76, 0.06);
+    --border-hover: rgba(201, 168, 76, 0.18);
+    --border-selected: rgba(201, 168, 76, 0.45);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--cream);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .ambient { position: fixed; border-radius: 50%; filter: blur(160px); pointer-events: none; z-index: 0; }
+  .amb-1 { width: 500px; height: 500px; top: -180px; left: -120px; background: var(--gold); opacity: 0.04; }
+  .amb-2 { width: 400px; height: 400px; bottom: -150px; right: -80px; background: var(--wine); opacity: 0.06; }
+
+  .page { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 48px 20px 80px; }
+
+  /* LOGIN */
+  .login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .login-box { width: 100%; max-width: 380px; text-align: center; animation: fadeIn 1s ease; }
+  .login-icon { font-size: 48px; margin-bottom: 20px; display: block; }
+  .login-box h1 { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--gold); font-weight: 700; margin-bottom: 8px; }
+  .login-box .subtitle { font-size: 14px; color: var(--cream-dim); margin-bottom: 36px; line-height: 1.5; }
+
+  .password-input {
+    width: 100%;
+    padding: 16px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    color: var(--cream);
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 6px;
+    text-align: center;
+    text-transform: uppercase;
+    outline: none;
+    transition: border-color 0.3s;
+    margin-bottom: 16px;
+  }
+  .password-input::placeholder { letter-spacing: 2px; font-size: 14px; color: var(--cream-dim); opacity: 0.5; }
+  .password-input:focus { border-color: var(--gold-dim); }
+
+  .login-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    border: none;
+    border-radius: 12px;
+    color: var(--bg-deep);
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .login-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .login-btn:active { transform: translateY(0); }
+
+  .login-error { margin-top: 16px; font-size: 13px; color: #e05555; opacity: 0; transition: opacity 0.3s; }
+  .login-error.show { opacity: 1; }
+
+  /* VOTE */
+  .vote-screen { display: none; }
+
+  .header { text-align: center; margin-bottom: 40px; animation: fadeDown 0.8s ease; }
+  .header-icon { font-size: 36px; margin-bottom: 10px; display: block; }
+  .greeting-banner {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--gold-light);
+    margin-bottom: 16px;
+    padding: 10px 20px;
+    background: rgba(201, 168, 76, 0.06);
+    border: 1px solid rgba(201, 168, 76, 0.12);
+    border-radius: 10px;
+    animation: fadeIn 0.8s ease 0.3s both;
+  }
+  .header h1 { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--gold); font-weight: 700; line-height: 1.2; }
+  .header p { font-size: 14px; color: var(--cream-dim); margin-top: 10px; line-height: 1.6; }
+  .rule-badge {
+    display: inline-block; margin-top: 14px; padding: 7px 18px;
+    border: 1px solid var(--gold-dim); border-radius: 100px;
+    font-size: 12px; color: var(--gold-light); font-weight: 500;
+    letter-spacing: 0.8px; text-transform: uppercase;
+  }
+
+  .counter { text-align: center; margin-bottom: 24px; font-size: 14px; color: var(--cream-dim); }
+  .counter .num { color: var(--gold); font-weight: 600; font-size: 20px; }
+  .counter.done .num { color: #4ade80; }
+
+  /* Cards */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 14px;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    animation: fadeUp 0.6s ease both;
+  }
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.12s; }
+  .card:nth-child(3) { animation-delay: 0.19s; }
+  .card:nth-child(4) { animation-delay: 0.26s; }
+  .card:nth-child(5) { animation-delay: 0.33s; }
+
+  .card:active { transform: scale(0.98); }
+  .card:hover { background: var(--bg-card-hover); border-color: var(--border-hover); }
+
+  .card.selected {
+    border-color: var(--border-selected);
+    background: linear-gradient(160deg, var(--bg-card) 40%, rgba(201, 168, 76, 0.04) 100%);
+    box-shadow: 0 0 50px var(--selected-glow), inset 0 1px 0 rgba(201, 168, 76, 0.08);
+  }
+  .card.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
+  .check {
+    position: absolute; top: 18px; right: 18px;
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 2px solid rgba(201, 168, 76, 0.15);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+  }
+  .selected .check { background: var(--gold); border-color: var(--gold); }
+  .check svg { width: 13px; height: 13px; stroke: var(--bg-deep); stroke-width: 3; fill: none; opacity: 0; transition: opacity 0.2s; }
+  .selected .check svg { opacity: 1; }
+
+  .card-name { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--gold-light); margin-bottom: 4px; padding-right: 40px; }
+  .card-vibe { font-size: 12px; color: var(--cream-dim); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 500; margin-bottom: 14px; }
+
+  .ingredients { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .ing-tag { padding: 5px 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 100px; font-size: 12px; color: var(--cream); }
+  .surprise-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .surprise-tag { padding: 5px 12px; background: rgba(201, 168, 76, 0.06); border: 1px dashed var(--gold-dim); border-radius: 100px; font-size: 12px; color: var(--gold); }
+  .garnish { margin-top: 12px; font-size: 12px; color: var(--cream-dim); font-style: italic; opacity: 0.7; }
+
+  .submit-wrap { margin-top: 32px; animation: fadeUp 0.6s ease 0.5s both; }
+  .submit-btn {
+    width: 100%; padding: 18px;
+    background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 100%);
+    border: none; border-radius: 14px;
+    color: var(--bg-deep); font-family: 'Outfit', sans-serif;
+    font-size: 16px; font-weight: 600; letter-spacing: 0.5px;
+    cursor: pointer; transition: all 0.3s;
+    opacity: 0.3; pointer-events: none;
+  }
+  .submit-btn.active { opacity: 1; pointer-events: auto; }
+  .submit-btn.active:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201, 168, 76, 0.25); }
+  .submit-btn.active:active { transform: translateY(0); }
+  .submit-btn.sending { opacity: 0.6; pointer-events: none; }
+
+  /* SUCCESS */
+  .success-screen { display: none; min-height: 100vh; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+  .success-screen .icon { font-size: 64px; margin-bottom: 20px; display: block; animation: popIn 0.5s ease; }
+  .success-screen h1 { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--gold); margin-bottom: 12px; }
+  .success-screen p { font-size: 15px; color: var(--cream-dim); line-height: 1.6; }
+  .chosen-list { margin-top: 24px; text-align: left; max-width: 300px; margin-left: auto; margin-right: auto; }
+  .chosen-item { padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 10px; margin-bottom: 8px; font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold-light); }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); } }
+  .shake { animation: shake 0.4s ease; }
+</style>
+</head>
+<body>
+
+<div class="ambient amb-1"></div>
+<div class="ambient amb-2"></div>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <span class="login-icon">🥃</span>
+    <h1>Kokteyl Gecesi</h1>
+    <p class="subtitle">Sana özel şifreni gir, oylamaya katıl</p>
+    <input type="text" class="password-input" id="passInput" placeholder="Şifre" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    <button class="login-btn" onclick="handleLogin()">GİRİŞ YAP</button>
+    <p class="login-error" id="loginError"></p>
+  </div>
+</div>
+
+<!-- VOTE -->
+<div class="vote-screen" id="voteScreen">
+  <div class="page">
+    <div class="header">
+      <span class="header-icon">🍸</span>
+      <div class="greeting-banner" id="greetingText"></div>
+      <h1>Viski Gecesi Menüsü</h1>
+      <p>Bu sefer viski bazlı 5 kokteyl hazırladım.<br>En beğendiğin 3 tanesini seç!</p>
+      <span class="rule-badge">🔒 Her kokteylde 2 sürpriz malzeme var</span>
+    </div>
+    <div class="counter" id="counter"><span class="num" id="countNum">0</span> / 3 seçildi</div>
+    <div id="cardList"></div>
+    <div class="submit-wrap">
+      <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">OYUMU GÖNDER</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-screen" id="successScreen">
+  <div>
+    <span class="icon">🎉</span>
+    <h1>Oyun Kaydedildi!</h1>
+    <p>Teşekkürler, seçimlerin iletildi.<br>Kokteyl gecesinde görüşürüz!</p>
+    <div class="chosen-list" id="chosenList"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+// ════════════════════════════════════
+// ⚙️ EMAILJS AYARLARI
+// ════════════════════════════════════
+// 1. https://www.emailjs.com → ücretsiz hesap aç
+// 2. Email Services → Add New Service → Gmail bağla
+// 3. Email Templates → Create New Template:
+//      Subject: 🍸 Kokteyl Oyu: {{voter}}
+//      Body:
+//        Oy veren: {{voter}}
+//        Seçimler: {{choices}}
+//        Zaman: {{time}}
+// 4. Aşağıdaki 3 değeri doldur:
+
+const EMAILJS_PUBLIC_KEY  = 'DDJeUgA08efhrrIPp';
+const EMAILJS_SERVICE_ID  = 'service_vkb7jry';
+const EMAILJS_TEMPLATE_ID = 'template_cohm3z2';
+
+// ════════════════════════════════════
+// 🔐 ŞİFRE SİSTEMİ
+// ════════════════════════════════════
+const PASSWORDS = {
+  'ARAP':   { name: 'Uygur',   greeting: 'Hoş geldin Uygur Bey, buyur içeri 🎩' },
+  'TAPULU': { name: 'Ufuk',    greeting: 'Hoş geldin Ufuk Bey, seni bekliyorduk 🥂' },
+  'MDMA':   { name: 'A.H.T.T', greeting: 'Hoş geldin A.H.T.T, bar sana açık 🍸' },
+  'MGAVM':  { name: 'MTK',     greeting: 'Hoş geldin MTK, gecenin yıldızı sensin ✨' },
+  'TEST':   { name: 'Hakan (Test)', greeting: 'Test modu aktif, patron içeride 🔧' }
+};
+
+function getUsed() {
+  try { return JSON.parse(localStorage.getItem('kg_used') || '[]'); }
+  catch { return []; }
+}
+function setUsed(p) {
+  const u = getUsed();
+  if (!u.includes(p)) { u.push(p); localStorage.setItem('kg_used', JSON.stringify(u)); }
+}
+
+let currentVoter = '';
+let currentPass = '';
+
+// ════════════════════════════════════
+// 🍸 KOKTEYLler
+// ════════════════════════════════════
+const cocktails = [
+  {
+    id: 'haysiyetsiz', name: 'Haysiyetsiz',
+    vibe: 'Dumanlı · Tatlı · Otsu',
+    visible: ['Közlenmiş pırasa', 'Bal', 'Limon', 'Soda'],
+    surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
+    garnish: 'Pırasa halkası & adaçayı yaprağıyla servis edilir'
+  },
+  {
+    id: 'edepsiz', name: 'Edepsiz',
+    vibe: 'Baharatlı · Ekşi · Cesur',
+    visible: ['Közlenmiş kırmızı biber', 'Nar', 'Limon', 'Soda'],
+    surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
+    garnish: 'Nar taneleri & biber dilimi ile servis edilir'
+  },
+  {
+    id: 'yuzsuz', name: 'Yüzsüz',
+    vibe: 'Kremamsı · Sıcak · Yoğun',
+    visible: ['Tahin', 'Tarçın', 'Limon'],
+    surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
+    garnish: 'Tarçın serpilmiş & tahin çizgisiyle servis edilir'
+  },
+  {
+    id: 'arsiz', name: 'Arsız',
+    vibe: 'Toprak · Acı · Dumanlı',
+    visible: ['Pancar', 'Greyfurt', 'Limon', 'Soda'],
+    surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
+    garnish: 'Biberiye dalı & pancar dilimi ile servis edilir'
+  },
+  {
+    id: 'terbiyesiz', name: 'Terbiyesiz',
+    vibe: 'Kremamsı · Taze · Meyveli',
+    visible: ['Avokado', 'Böğürtlen', 'Limon', 'Soda'],
+    surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
+    garnish: 'Böğürtlen & nane yaprağıyla servis edilir'
+  }
+];
+
+// ════════════════════════════════════
+// LOGIN
+// ════════════════════════════════════
+const passInput = document.getElementById('passInput');
+passInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+
+function handleLogin() {
+  const val = passInput.value.trim().toUpperCase();
+  const err = document.getElementById('loginError');
+
+  if (!PASSWORDS[val]) {
+    err.textContent = 'Geçersiz şifre';
+    err.classList.add('show');
+    passInput.classList.add('shake');
+    setTimeout(() => passInput.classList.remove('shake'), 400);
+    return;
+  }
+
+  if (getUsed().includes(val)) {
+    err.textContent = 'Bu şifre zaten kullanıldı. Çakallık mı yapıyorsun? 🧐';
+    err.classList.add('show');
+    passInput.classList.add('shake');
+    setTimeout(() => passInput.classList.remove('shake'), 400);
+    return;
+  }
+
+  currentVoter = PASSWORDS[val].name;
+  currentPass = val;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('voteScreen').style.display = 'block';
+  document.getElementById('greetingText').textContent = PASSWORDS[val].greeting;
+  renderCards();
+}
+
+// ════════════════════════════════════
+// CARDS
+// ════════════════════════════════════
+let selected = new Set();
+const MAX = 3;
+
+function renderCards() {
+  document.getElementById('cardList').innerHTML = cocktails.map(c => `
+    <div class="card" id="card-${c.id}" onclick="toggle('${c.id}')">
+      <div class="check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></div>
+      <div class="card-name">${c.name}</div>
+      <div class="card-vibe">${c.vibe}</div>
+      <div class="ingredients">${c.visible.map(v => `<span class="ing-tag">${v}</span>`).join('')}</div>
+      <div class="surprise-tags">${c.surprise.map(s => `<span class="surprise-tag">${s}</span>`).join('')}</div>
+      <div class="garnish">${c.garnish}</div>
+    </div>
+  `).join('');
+}
+
+function toggle(id) {
+  if (selected.has(id)) selected.delete(id);
+  else if (selected.size < MAX) selected.add(id);
+  updateUI();
+}
+
+function updateUI() {
+  const n = selected.size;
+  document.getElementById('countNum').textContent = n;
+  document.getElementById('counter').classList.toggle('done', n === MAX);
+  cocktails.forEach(c => {
+    const el = document.getElementById(`card-${c.id}`);
+    const s = selected.has(c.id);
+    el.classList.toggle('selected', s);
+    el.classList.toggle('disabled', !s && n >= MAX);
+  });
+  document.getElementById('submitBtn').classList.toggle('active', n === MAX);
+}
+
+// ════════════════════════════════════
+// SUBMIT
+// ════════════════════════════════════
+async function handleSubmit() {
+  if (selected.size !== MAX) return;
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = 'GÖNDERİLİYOR...';
+  btn.classList.add('sending');
+
+  const choices = [...selected].map(id => cocktails.find(c => c.id === id).name);
+  const now = new Date().toLocaleString('tr-TR');
+
+  try {
+    if (EMAILJS_PUBLIC_KEY !== 'BURAYA_PUBLIC_KEY') {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        voter: currentVoter,
+        choices: choices.join(', '),
+        time: now
+      });
+    }
+  } catch (e) {
+    console.error('EmailJS error:', e);
+  }
+
+  setUsed(currentPass);
+  showSuccess(choices);
+}
+
+function showSuccess(choices) {
+  document.getElementById('voteScreen').style.display = 'none';
+  const ss = document.getElementById('successScreen');
+  ss.style.display = 'flex';
+  document.getElementById('chosenList').innerHTML = choices.map(n => `<div class="chosen-item">🍸 ${n}</div>`).join('');
+}
+</script>
+</body>
+</html>
