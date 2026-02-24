@@ -177,8 +177,94 @@
   .ingredients { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
   .ing-tag { padding: 5px 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 100px; font-size: 12px; color: var(--cream); }
   .surprise-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-  .surprise-tag { padding: 5px 12px; background: rgba(201, 168, 76, 0.06); border: 1px dashed var(--gold-dim); border-radius: 100px; font-size: 12px; color: var(--gold); }
+  .surprise-tag { padding: 5px 12px; background: rgba(201, 168, 76, 0.06); border: 1px dashed var(--gold-dim); border-radius: 100px; font-size: 12px; color: var(--gold); cursor: pointer; transition: all 0.2s; }
+  .surprise-tag:hover { background: rgba(201, 168, 76, 0.12); }
+  .surprise-tag.revealed { border-style: solid; background: rgba(201, 168, 76, 0.1); cursor: default; }
   .garnish { margin-top: 12px; font-size: 12px; color: var(--cream-dim); font-style: italic; opacity: 0.7; }
+
+  /* QUIZ MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 50;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+  }
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-hover);
+    border-radius: 16px;
+    padding: 28px;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    animation: fadeUp 0.3s ease;
+  }
+  .modal h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .modal .quiz-q {
+    font-size: 15px;
+    color: var(--cream);
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .modal .quiz-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    color: var(--cream);
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+    margin-bottom: 12px;
+    transition: border-color 0.3s;
+  }
+  .modal .quiz-input:focus { border-color: var(--gold-dim); }
+  .modal .quiz-submit {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    border: none;
+    border-radius: 10px;
+    color: var(--bg-deep);
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .modal .quiz-submit:hover { filter: brightness(1.1); }
+  .modal .quiz-result {
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    display: none;
+  }
+  .modal .quiz-result.wrong { color: #e05555; display: block; }
+  .modal .quiz-result.busted { color: var(--gold); display: block; }
+  .modal .modal-close {
+    margin-top: 16px;
+    padding: 10px 24px;
+    background: none;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    color: var(--cream-dim);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+  }
 
   .submit-wrap { margin-top: 32px; animation: fadeUp 0.6s ease 0.5s both; }
   .submit-btn {
@@ -256,6 +342,18 @@
   </div>
 </div>
 
+<!-- QUIZ MODAL -->
+<div class="modal-overlay" id="quizModal">
+  <div class="modal">
+    <h3>🔒 Sürpriz Kilidi</h3>
+    <p class="quiz-q" id="quizQuestion"></p>
+    <input type="text" class="quiz-input" id="quizInput" placeholder="Cevabını yaz..." autocomplete="off">
+    <button class="quiz-submit" onclick="checkQuiz()">CEVAPLA</button>
+    <div class="quiz-result" id="quizResult"></div>
+    <button class="modal-close" onclick="closeQuiz()">Kapat</button>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
 // ════════════════════════════════════
@@ -308,35 +406,60 @@ const cocktails = [
     vibe: 'Dumanlı · Tatlı · Otsu',
     visible: ['Közlenmiş pırasa', 'Bal', 'Limon', 'Soda'],
     surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
-    garnish: 'Pırasa halkası & adaçayı yaprağıyla servis edilir'
+    secrets: ['Armut', 'Adaçayı'],
+    garnish: 'Közlenmiş pırasa halkası & armut dilimi ile servis edilir',
+    questions: [
+      { q: 'Fermat\'ın Son Teoremi hangi yıl kanıtlandı?', a: '1995', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' },
+      { q: '1 + 1 kaçtır? (İkili sayı sisteminde)', a: '10', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' }
+    ]
   },
   {
     id: 'edepsiz', name: 'Edepsiz',
     vibe: 'Baharatlı · Ekşi · Cesur',
-    visible: ['Közlenmiş kırmızı biber', 'Nar', 'Limon', 'Soda'],
+    visible: ['Közlenmiş kırmızı biber', 'Bal', 'Limon', 'Soda'],
     surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
-    garnish: 'Nar taneleri & biber dilimi ile servis edilir'
+    secrets: ['Zencefil', 'Nar'],
+    garnish: 'Biber dilimi & limon kabuğu ile servis edilir',
+    questions: [
+      { q: 'Poincaré Varsayımı\'nı kanıtlayan matematikçi kimdir?', a: 'perelman', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' },
+      { q: 'Euler sayısı (e) virgülden sonra ilk 4 rakam nedir?', a: '7182', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' }
+    ]
   },
   {
     id: 'yuzsuz', name: 'Yüzsüz',
     vibe: 'Kremamsı · Sıcak · Yoğun',
-    visible: ['Tahin', 'Tarçın', 'Limon'],
+    visible: ['Tahin', 'Bal', 'Limon'],
     surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
-    garnish: 'Tarçın serpilmiş & tahin çizgisiyle servis edilir'
+    secrets: ['Muz', 'Tarçın'],
+    garnish: 'Tahin çizgisi & bal damlası ile servis edilir',
+    questions: [
+      { q: 'Dört renk teoremi ilk bilgisayarla kanıtlanan teorem mi? (Evet/Hayır)', a: 'evet', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' },
+      { q: 'Pi sayısının virgülden sonra ilk 5 rakamı nedir?', a: '14159', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' }
+    ]
   },
   {
     id: 'arsiz', name: 'Arsız',
-    vibe: 'Toprak · Acı · Dumanlı',
-    visible: ['Pancar', 'Greyfurt', 'Limon', 'Soda'],
+    vibe: 'Toprak · Ekşi · Dumanlı',
+    visible: ['Pancar', 'Portakal', 'Limon', 'Soda'],
     surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
-    garnish: 'Biberiye dalı & pancar dilimi ile servis edilir'
+    secrets: ['Yakılmış biberiye', 'Akçaağaç şurubu'],
+    garnish: 'Portakal dilimi & pancar şeridi ile servis edilir',
+    questions: [
+      { q: 'Kepler Varsayımı neyin en verimli dizilimini kanıtlar?', a: 'küre', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' },
+      { q: 'Sonsuz sayıda asal sayı olduğunu ilk kanıtlayan kimdir?', a: 'öklid', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' }
+    ]
   },
   {
     id: 'terbiyesiz', name: 'Terbiyesiz',
     vibe: 'Kremamsı · Taze · Meyveli',
     visible: ['Avokado', 'Böğürtlen', 'Limon', 'Soda'],
     surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
-    garnish: 'Böğürtlen & nane yaprağıyla servis edilir'
+    secrets: ['Nane', 'Bal'],
+    garnish: 'Böğürtlen & limon kabuğu ile servis edilir',
+    questions: [
+      { q: 'Goldbach Varsayımı\'na göre her çift sayı neyin toplamıdır?', a: 'asal', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' },
+      { q: 'Karekök 2 irrasyonel midir? (Evet/Hayır)', a: 'evet', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' }
+    ]
   }
 ];
 
@@ -390,11 +513,63 @@ function renderCards() {
       <div class="card-name">${c.name}</div>
       <div class="card-vibe">${c.vibe}</div>
       <div class="ingredients">${c.visible.map(v => `<span class="ing-tag">${v}</span>`).join('')}</div>
-      <div class="surprise-tags">${c.surprise.map(s => `<span class="surprise-tag">${s}</span>`).join('')}</div>
+      <div class="surprise-tags">
+        <span class="surprise-tag" id="s-${c.id}-0" onclick="event.stopPropagation(); openQuiz('${c.id}', 0)">🔒 Sürpriz #1</span>
+        <span class="surprise-tag" id="s-${c.id}-1" onclick="event.stopPropagation(); openQuiz('${c.id}', 1)">🔒 Sürpriz #2</span>
+      </div>
       <div class="garnish">${c.garnish}</div>
     </div>
   `).join('');
 }
+
+// ════════════════════════════════════
+// 🧮 MATEMATİK QUIZ
+// ════════════════════════════════════
+let currentQuizCocktail = null;
+let currentQuizIndex = null;
+
+function openQuiz(cocktailId, surpriseIndex) {
+  const tag = document.getElementById(`s-${cocktailId}-${surpriseIndex}`);
+  if (tag.classList.contains('revealed')) return;
+
+  const c = cocktails.find(x => x.id === cocktailId);
+  currentQuizCocktail = cocktailId;
+  currentQuizIndex = surpriseIndex;
+
+  document.getElementById('quizQuestion').textContent = c.questions[surpriseIndex].q;
+  document.getElementById('quizInput').value = '';
+  document.getElementById('quizResult').className = 'quiz-result';
+  document.getElementById('quizResult').textContent = '';
+  document.getElementById('quizModal').classList.add('show');
+  setTimeout(() => document.getElementById('quizInput').focus(), 100);
+}
+
+function checkQuiz() {
+  const c = cocktails.find(x => x.id === currentQuizCocktail);
+  const q = c.questions[currentQuizIndex];
+  const answer = document.getElementById('quizInput').value.trim().toLowerCase();
+  const result = document.getElementById('quizResult');
+
+  if (!answer) return;
+
+  if (answer.includes(q.a.toLowerCase())) {
+    // Doğru cevap = yapay zeka kullanıyor!
+    result.textContent = q.fake;
+    result.className = 'quiz-result busted';
+  } else {
+    result.textContent = 'Yanlış cevap! Sürpriz malzeme gizli kalıyor 🤷';
+    result.className = 'quiz-result wrong';
+  }
+}
+
+function closeQuiz() {
+  document.getElementById('quizModal').classList.remove('show');
+  currentQuizCocktail = null;
+  currentQuizIndex = null;
+}
+
+// Quiz input'ta Enter ile cevaplama
+document.getElementById('quizInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkQuiz(); });
 
 function toggle(id) {
   if (selected.has(id)) selected.delete(id);
