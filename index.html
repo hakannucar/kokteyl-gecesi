@@ -279,11 +279,11 @@ const EMAILJS_TEMPLATE_ID = 'template_cohm3z2';
 // 🔐 ŞİFRE SİSTEMİ
 // ════════════════════════════════════
 const PASSWORDS = {
-  'ARAP':   { name: 'Uygur',   greeting: 'Hoş geldin Uygur Bey, buyur içeri 🎩' },
-  'TAPULU': { name: 'Ufuk',    greeting: 'Hoş geldin Ufuk Bey, seni bekliyorduk 🥂' },
-  'MDMA':   { name: 'A.H.T.T', greeting: 'Hoş geldin A.H.T.T, bar sana açık 🍸' },
-  'MGAVM':  { name: 'MTK',     greeting: 'Hoş geldin MTK, gecenin yıldızı sensin ✨' },
-  'TEST':   { name: 'Hakan (Test)', greeting: 'Test modu aktif, patron içeride 🔧' }
+  'ARAP':     { name: 'Uygur',   greeting: 'Hoş geldin Uygur Bey, buyur içeri 🎩', admin: false },
+  'TAPULU':   { name: 'Ufuk',    greeting: 'Hoş geldin Ufuk Bey, seni bekliyorduk 🥂', admin: false },
+  'MDMA':     { name: 'A.H.T.T', greeting: 'Hoş geldin A.H.T.T, bar sana açık 🍸', admin: false },
+  'MGAVM':    { name: 'MTK',     greeting: 'Hoş geldin MTK, gecenin yıldızı sensin ✨', admin: false },
+  'NAMUSSUZ': { name: 'Patron',  greeting: 'Hoş geldin Patron, sistem senin emrinde 🔧', admin: true }
 };
 
 function getUsed() {
@@ -297,6 +297,7 @@ function setUsed(p) {
 
 let currentVoter = '';
 let currentPass = '';
+let isAdmin = false;
 
 // ════════════════════════════════════
 // 🍸 KOKTEYLler
@@ -357,7 +358,9 @@ function handleLogin() {
     return;
   }
 
-  if (getUsed().includes(val)) {
+  const pw = PASSWORDS[val];
+
+  if (!pw.admin && getUsed().includes(val)) {
     err.textContent = 'Bu şifre zaten kullanıldı. Çakallık mı yapıyorsun? 🧐';
     err.classList.add('show');
     passInput.classList.add('shake');
@@ -365,11 +368,12 @@ function handleLogin() {
     return;
   }
 
-  currentVoter = PASSWORDS[val].name;
+  currentVoter = pw.name;
   currentPass = val;
+  isAdmin = pw.admin;
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('voteScreen').style.display = 'block';
-  document.getElementById('greetingText').textContent = PASSWORDS[val].greeting;
+  document.getElementById('greetingText').textContent = pw.greeting;
   renderCards();
 }
 
@@ -436,7 +440,7 @@ async function handleSubmit() {
     console.error('EmailJS error:', e);
   }
 
-  setUsed(currentPass);
+  if (!isAdmin) setUsed(currentPass);
   showSuccess(choices);
 }
 
