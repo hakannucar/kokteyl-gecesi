@@ -2,298 +2,487 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kokteyl Gecesi — Oyunu Sen Belirle</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kokteyl Gecesi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-deep: #08080d;
-    --bg-card: #111118;
-    --bg-card-hover: #18181f;
-    --gold: #c9a84c;
-    --gold-light: #e8d48b;
-    --gold-dim: #7a6830;
-    --cream: #f0ebe0;
-    --cream-dim: #8a8275;
+    --bg: #0b0b10;
+    --card: #13131a;
+    --card-hover: #1a1a23;
+    --gold: #d4a843;
+    --gold-light: #f0d78c;
+    --gold-dim: #8a7234;
+    --cream: #eae5da;
+    --cream-mid: #b5ad9e;
+    --cream-dim: #7a7468;
     --wine: #7a2038;
-    --selected-glow: rgba(201, 168, 76, 0.12);
-    --border-subtle: rgba(201, 168, 76, 0.06);
-    --border-hover: rgba(201, 168, 76, 0.18);
-    --border-selected: rgba(201, 168, 76, 0.45);
+    --green: #4ade80;
+    --red: #ef5555;
+    --glow: rgba(212, 168, 67, 0.10);
+    --border: rgba(212, 168, 67, 0.07);
+    --border-h: rgba(212, 168, 67, 0.20);
+    --border-s: rgba(212, 168, 67, 0.50);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+  html { font-size: 16px; }
+
   body {
-    background: var(--bg-deep);
+    background: var(--bg);
     color: var(--cream);
-    font-family: 'Outfit', sans-serif;
-    font-weight: 300;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
     min-height: 100vh;
+    min-height: 100dvh;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
   }
 
+  /* Subtle grain */
   body::after {
     content: '';
     position: fixed;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 100;
   }
 
   .ambient { position: fixed; border-radius: 50%; filter: blur(160px); pointer-events: none; z-index: 0; }
-  .amb-1 { width: 500px; height: 500px; top: -180px; left: -120px; background: var(--gold); opacity: 0.04; }
-  .amb-2 { width: 400px; height: 400px; bottom: -150px; right: -80px; background: var(--wine); opacity: 0.06; }
+  .amb-1 { width: 420px; height: 420px; top: -160px; left: -100px; background: var(--gold); opacity: 0.04; }
+  .amb-2 { width: 350px; height: 350px; bottom: -120px; right: -60px; background: var(--wine); opacity: 0.05; }
 
-  .page { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 48px 20px 80px; }
+  .page {
+    position: relative; z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 32px 16px 100px;
+  }
 
-  /* LOGIN */
+  /* ─── TYPOGRAPHY ─── */
+  .title {
+    font-family: 'DM Serif Display', serif;
+    color: var(--gold);
+    font-weight: 400;
+  }
+
+  /* ─── LOGIN ─── */
   .login-screen {
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 24px 16px;
   }
-  .login-box { width: 100%; max-width: 380px; text-align: center; animation: fadeIn 1s ease; }
-  .login-icon { font-size: 48px; margin-bottom: 20px; display: block; }
-  .login-box h1 { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--gold); font-weight: 700; margin-bottom: 8px; }
-  .login-box .subtitle { font-size: 14px; color: var(--cream-dim); margin-bottom: 36px; line-height: 1.5; }
+
+  .login-box {
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    animation: fadeIn 0.8s ease;
+  }
+
+  .login-icon { font-size: 44px; margin-bottom: 16px; display: block; }
+
+  .login-box h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .login-box .subtitle {
+    font-size: 15px;
+    color: var(--cream-dim);
+    margin-bottom: 32px;
+    line-height: 1.5;
+  }
 
   .password-input {
     width: 100%;
-    padding: 16px 20px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    padding: 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 12px;
     color: var(--cream);
-    font-family: 'Outfit', sans-serif;
-    font-size: 18px;
-    font-weight: 500;
-    letter-spacing: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 5px;
     text-align: center;
     text-transform: uppercase;
     outline: none;
     transition: border-color 0.3s;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
-  .password-input::placeholder { letter-spacing: 2px; font-size: 14px; color: var(--cream-dim); opacity: 0.5; }
+  .password-input::placeholder {
+    letter-spacing: 1px;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--cream-dim);
+    opacity: 0.6;
+  }
   .password-input:focus { border-color: var(--gold-dim); }
 
-  .login-btn {
+  .btn-gold {
     width: 100%;
     padding: 16px;
     background: linear-gradient(135deg, var(--gold-dim), var(--gold));
     border: none;
     border-radius: 12px;
-    color: var(--bg-deep);
-    font-family: 'Outfit', sans-serif;
+    color: var(--bg);
+    font-family: 'DM Sans', sans-serif;
     font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 1px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
+    min-height: 52px;
   }
-  .login-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-  .login-btn:active { transform: translateY(0); }
+  .btn-gold:active { transform: scale(0.98); opacity: 0.9; }
 
-  .login-error { margin-top: 16px; font-size: 13px; color: #e05555; opacity: 0; transition: opacity 0.3s; }
+  .login-error {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--red);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
   .login-error.show { opacity: 1; }
 
-  /* VOTE */
+  /* ─── VOTE ─── */
   .vote-screen { display: none; }
 
-  .header { text-align: center; margin-bottom: 40px; animation: fadeDown 0.8s ease; }
-  .header-icon { font-size: 36px; margin-bottom: 10px; display: block; }
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+    animation: fadeDown 0.7s ease;
+  }
+
+  .header-icon { font-size: 32px; margin-bottom: 8px; display: block; }
+
   .greeting-banner {
-    font-family: 'Playfair Display', serif;
-    font-size: 16px;
-    font-style: italic;
+    font-size: 15px;
+    font-weight: 500;
     color: var(--gold-light);
-    margin-bottom: 16px;
-    padding: 10px 20px;
-    background: rgba(201, 168, 76, 0.06);
-    border: 1px solid rgba(201, 168, 76, 0.12);
-    border-radius: 10px;
-    animation: fadeIn 0.8s ease 0.3s both;
-  }
-  .header h1 { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--gold); font-weight: 700; line-height: 1.2; }
-  .header p { font-size: 14px; color: var(--cream-dim); margin-top: 10px; line-height: 1.6; }
-  .rule-badge {
-    display: inline-block; margin-top: 14px; padding: 7px 18px;
-    border: 1px solid var(--gold-dim); border-radius: 100px;
-    font-size: 12px; color: var(--gold-light); font-weight: 500;
-    letter-spacing: 0.8px; text-transform: uppercase;
-  }
-
-  .counter { text-align: center; margin-bottom: 24px; font-size: 14px; color: var(--cream-dim); }
-  .counter .num { color: var(--gold); font-weight: 600; font-size: 20px; }
-  .counter.done .num { color: #4ade80; }
-
-  /* Cards */
-  .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    border-radius: 16px;
-    padding: 22px;
     margin-bottom: 14px;
+    padding: 10px 16px;
+    background: rgba(212, 168, 67, 0.06);
+    border: 1px solid rgba(212, 168, 67, 0.12);
+    border-radius: 10px;
+    animation: fadeIn 0.8s ease 0.2s both;
+  }
+
+  .header h1 { font-size: 24px; line-height: 1.3; }
+  .header p { font-size: 15px; color: var(--cream-mid); margin-top: 8px; line-height: 1.55; }
+
+  .rule-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 14px;
+    align-items: center;
+  }
+
+  .rule-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid var(--gold-dim);
+    border-radius: 100px;
+    font-size: 13px;
+    color: var(--gold-light);
+    font-weight: 500;
+  }
+
+  .hint-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px dashed var(--gold-dim);
+    border-radius: 100px;
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 400;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+
+  .counter {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 15px;
+    color: var(--cream-dim);
+    font-weight: 400;
+  }
+  .counter .num { color: var(--gold); font-weight: 700; font-size: 20px; }
+  .counter.done .num { color: var(--green); }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 12px;
     cursor: pointer;
-    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: all 0.25s ease;
     position: relative;
-    animation: fadeUp 0.6s ease both;
+    animation: fadeUp 0.5s ease both;
+    min-height: 48px;
   }
   .card:nth-child(1) { animation-delay: 0.05s; }
-  .card:nth-child(2) { animation-delay: 0.12s; }
-  .card:nth-child(3) { animation-delay: 0.19s; }
-  .card:nth-child(4) { animation-delay: 0.26s; }
-  .card:nth-child(5) { animation-delay: 0.33s; }
+  .card:nth-child(2) { animation-delay: 0.10s; }
+  .card:nth-child(3) { animation-delay: 0.15s; }
+  .card:nth-child(4) { animation-delay: 0.20s; }
+  .card:nth-child(5) { animation-delay: 0.25s; }
 
   .card:active { transform: scale(0.98); }
-  .card:hover { background: var(--bg-card-hover); border-color: var(--border-hover); }
 
   .card.selected {
-    border-color: var(--border-selected);
-    background: linear-gradient(160deg, var(--bg-card) 40%, rgba(201, 168, 76, 0.04) 100%);
-    box-shadow: 0 0 50px var(--selected-glow), inset 0 1px 0 rgba(201, 168, 76, 0.08);
+    border-color: var(--border-s);
+    background: linear-gradient(160deg, var(--card) 50%, rgba(212, 168, 67, 0.04) 100%);
+    box-shadow: 0 0 40px var(--glow);
   }
-  .card.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
+  .card.disabled { opacity: 0.25; pointer-events: none; }
 
   .check {
-    position: absolute; top: 18px; right: 18px;
-    width: 26px; height: 26px; border-radius: 50%;
-    border: 2px solid rgba(201, 168, 76, 0.15);
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.3s;
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid rgba(212, 168, 67, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s;
+    flex-shrink: 0;
   }
   .selected .check { background: var(--gold); border-color: var(--gold); }
-  .check svg { width: 13px; height: 13px; stroke: var(--bg-deep); stroke-width: 3; fill: none; opacity: 0; transition: opacity 0.2s; }
+  .check svg { width: 14px; height: 14px; stroke: var(--bg); stroke-width: 3; fill: none; opacity: 0; transition: opacity 0.2s; }
   .selected .check svg { opacity: 1; }
 
-  .card-name { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--gold-light); margin-bottom: 4px; padding-right: 40px; }
-  .card-vibe { font-size: 12px; color: var(--cream-dim); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 500; margin-bottom: 14px; }
+  .card-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 21px;
+    color: var(--gold-light);
+    margin-bottom: 3px;
+    padding-right: 44px;
+    line-height: 1.3;
+  }
 
-  .ingredients { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-  .ing-tag { padding: 5px 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 100px; font-size: 12px; color: var(--cream); }
+  .card-vibe {
+    font-size: 12px;
+    color: var(--cream-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .ingredients { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .ing-tag {
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 100px;
+    font-size: 13px;
+    color: var(--cream);
+    font-weight: 400;
+  }
+
   .surprise-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-  .surprise-tag { padding: 5px 12px; background: rgba(201, 168, 76, 0.06); border: 1px dashed var(--gold-dim); border-radius: 100px; font-size: 12px; color: var(--gold); cursor: pointer; transition: all 0.2s; }
-  .surprise-tag:hover { background: rgba(201, 168, 76, 0.12); }
-  .surprise-tag.revealed { border-style: solid; background: rgba(201, 168, 76, 0.1); cursor: default; }
-  .garnish { margin-top: 12px; font-size: 12px; color: var(--cream-dim); font-style: italic; opacity: 0.7; }
+  .surprise-tag {
+    padding: 6px 12px;
+    background: rgba(212, 168, 67, 0.06);
+    border: 1px dashed var(--gold-dim);
+    border-radius: 100px;
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+  }
+  .surprise-tag:active { background: rgba(212, 168, 67, 0.15); }
+  .surprise-tag.revealed { border-style: solid; background: rgba(212, 168, 67, 0.1); cursor: default; }
 
-  /* QUIZ MODAL */
+  .garnish {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--cream-dim);
+    font-style: italic;
+    opacity: 0.6;
+  }
+
+  /* ─── SUBMIT ─── */
+  .submit-wrap { margin-top: 28px; animation: fadeUp 0.5s ease 0.4s both; }
+
+  .submit-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 100%);
+    border: none;
+    border-radius: 14px;
+    color: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.25;
+    pointer-events: none;
+    min-height: 56px;
+  }
+  .submit-btn.active { opacity: 1; pointer-events: auto; }
+  .submit-btn.active:active { transform: scale(0.98); }
+  .submit-btn.sending { opacity: 0.5; pointer-events: none; }
+
+  /* ─── SUCCESS ─── */
+  .success-screen {
+    display: none;
+    min-height: 100vh;
+    min-height: 100dvh;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px 16px;
+  }
+
+  .success-screen .icon { font-size: 56px; margin-bottom: 16px; display: block; animation: popIn 0.5s ease; }
+  .success-screen h1 { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--gold); margin-bottom: 10px; }
+  .success-screen p { font-size: 15px; color: var(--cream-mid); line-height: 1.6; }
+
+  .chosen-list { margin-top: 20px; text-align: left; max-width: 280px; margin-left: auto; margin-right: auto; }
+  .chosen-item {
+    padding: 12px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    color: var(--gold-light);
+  }
+
+  /* ─── QUIZ MODAL ─── */
   .modal-overlay {
     display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.8);
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
     z-index: 50;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    animation: fadeIn 0.3s ease;
+    padding: 16px;
   }
   .modal-overlay.show { display: flex; }
 
   .modal {
-    background: var(--bg-card);
-    border: 1px solid var(--border-hover);
+    background: var(--card);
+    border: 1px solid var(--border-h);
     border-radius: 16px;
-    padding: 28px;
-    max-width: 380px;
+    padding: 24px 20px;
+    max-width: 360px;
     width: 100%;
     text-align: center;
     animation: fadeUp 0.3s ease;
   }
+
   .modal h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
     color: var(--gold);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
+
+  .modal .quiz-hint {
+    font-size: 13px;
+    color: var(--cream-dim);
+    margin-bottom: 16px;
+  }
+
   .modal .quiz-q {
-    font-size: 15px;
+    font-size: 16px;
     color: var(--cream);
-    line-height: 1.5;
+    line-height: 1.55;
     margin-bottom: 20px;
+    font-weight: 500;
   }
+
   .modal .quiz-input {
     width: 100%;
     padding: 14px 16px;
-    background: var(--bg-deep);
-    border: 1px solid var(--border-subtle);
+    background: var(--bg);
+    border: 1px solid var(--border);
     border-radius: 10px;
     color: var(--cream);
-    font-family: 'Outfit', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 16px;
     text-align: center;
     outline: none;
     margin-bottom: 12px;
     transition: border-color 0.3s;
+    min-height: 48px;
   }
   .modal .quiz-input:focus { border-color: var(--gold-dim); }
+
   .modal .quiz-submit {
     width: 100%;
     padding: 14px;
     background: linear-gradient(135deg, var(--gold-dim), var(--gold));
     border: none;
     border-radius: 10px;
-    color: var(--bg-deep);
-    font-family: 'Outfit', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
+    color: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s;
+    min-height: 48px;
   }
-  .modal .quiz-submit:hover { filter: brightness(1.1); }
+  .modal .quiz-submit:active { opacity: 0.9; }
+
   .modal .quiz-result {
     margin-top: 16px;
     font-size: 14px;
     line-height: 1.5;
     display: none;
+    font-weight: 500;
   }
-  .modal .quiz-result.wrong { color: #e05555; display: block; }
+  .modal .quiz-result.wrong { color: var(--red); display: block; }
   .modal .quiz-result.busted { color: var(--gold); display: block; }
+
   .modal .modal-close {
-    margin-top: 16px;
+    margin-top: 14px;
     padding: 10px 24px;
     background: none;
-    border: 1px solid var(--border-subtle);
+    border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--cream-dim);
-    font-family: 'Outfit', sans-serif;
-    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
     cursor: pointer;
+    min-height: 42px;
   }
+  .modal .modal-close:active { opacity: 0.7; }
 
-  .submit-wrap { margin-top: 32px; animation: fadeUp 0.6s ease 0.5s both; }
-  .submit-btn {
-    width: 100%; padding: 18px;
-    background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 100%);
-    border: none; border-radius: 14px;
-    color: var(--bg-deep); font-family: 'Outfit', sans-serif;
-    font-size: 16px; font-weight: 600; letter-spacing: 0.5px;
-    cursor: pointer; transition: all 0.3s;
-    opacity: 0.3; pointer-events: none;
-  }
-  .submit-btn.active { opacity: 1; pointer-events: auto; }
-  .submit-btn.active:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201, 168, 76, 0.25); }
-  .submit-btn.active:active { transform: translateY(0); }
-  .submit-btn.sending { opacity: 0.6; pointer-events: none; }
-
-  /* SUCCESS */
-  .success-screen { display: none; min-height: 100vh; align-items: center; justify-content: center; text-align: center; padding: 20px; }
-  .success-screen .icon { font-size: 64px; margin-bottom: 20px; display: block; animation: popIn 0.5s ease; }
-  .success-screen h1 { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--gold); margin-bottom: 12px; }
-  .success-screen p { font-size: 15px; color: var(--cream-dim); line-height: 1.6; }
-  .chosen-list { margin-top: 24px; text-align: left; max-width: 300px; margin-left: auto; margin-right: auto; }
-  .chosen-item { padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 10px; margin-bottom: 8px; font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold-light); }
-
+  /* ─── ANIMATIONS ─── */
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
-  @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); } }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
   .shake { animation: shake 0.4s ease; }
 </style>
 </head>
@@ -309,7 +498,7 @@
     <h1>Kokteyl Gecesi</h1>
     <p class="subtitle">Sana özel şifreni gir, oylamaya katıl</p>
     <input type="text" class="password-input" id="passInput" placeholder="Şifre" autocomplete="off" autocapitalize="characters" spellcheck="false">
-    <button class="login-btn" onclick="handleLogin()">GİRİŞ YAP</button>
+    <button class="btn-gold" onclick="handleLogin()">GİRİŞ YAP</button>
     <p class="login-error" id="loginError"></p>
   </div>
 </div>
@@ -320,10 +509,14 @@
     <div class="header">
       <span class="header-icon">🍸</span>
       <div class="greeting-banner" id="greetingText"></div>
-      <h1>Viski Gecesi Menüsü</h1>
-      <p>Bu sefer viski bazlı 5 kokteyl hazırladım.<br>En beğendiğin 3 tanesini seç!</p>
-      <span class="rule-badge">🔒 Her kokteylde 2 sürpriz malzeme var</span>
+      <h1 class="title">Viski Gecesi Menüsü</h1>
+      <p>Bu sefer viski bazlı 5 kokteyl hazırladım. En beğendiğin 3 tanesini seç!</p>
+      <div class="rule-badges">
+        <span class="rule-badge">🔒 Her kokteylde 2 sürpriz malzeme var</span>
+        <span class="hint-badge">👆 Sürprizlere dokun, soruyu bil, malzemeyi öğren!</span>
+      </div>
     </div>
+
     <div class="counter" id="counter"><span class="num" id="countNum">0</span> / 3 seçildi</div>
     <div id="cardList"></div>
     <div class="submit-wrap">
@@ -336,7 +529,7 @@
 <div class="success-screen" id="successScreen">
   <div>
     <span class="icon">🎉</span>
-    <h1>Oyun Kaydedildi!</h1>
+    <h1 class="title">Oyun Kaydedildi!</h1>
     <p>Teşekkürler, seçimlerin iletildi.<br>Kokteyl gecesinde görüşürüz!</p>
     <div class="chosen-list" id="chosenList"></div>
   </div>
@@ -346,8 +539,9 @@
 <div class="modal-overlay" id="quizModal">
   <div class="modal">
     <h3>🔒 Sürpriz Kilidi</h3>
+    <p class="quiz-hint">Soruyu doğru cevapla, sürpriz malzemeyi öğren</p>
     <p class="quiz-q" id="quizQuestion"></p>
-    <input type="text" class="quiz-input" id="quizInput" placeholder="Cevabını yaz..." autocomplete="off">
+    <input type="text" class="quiz-input" id="quizInput" placeholder="Cevabını yaz..." autocomplete="off" inputmode="text">
     <button class="quiz-submit" onclick="checkQuiz()">CEVAPLA</button>
     <div class="quiz-result" id="quizResult"></div>
     <button class="modal-close" onclick="closeQuiz()">Kapat</button>
@@ -357,24 +551,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
 // ════════════════════════════════════
-// ⚙️ EMAILJS AYARLARI
+// ⚙️ EMAILJS
 // ════════════════════════════════════
-// 1. https://www.emailjs.com → ücretsiz hesap aç
-// 2. Email Services → Add New Service → Gmail bağla
-// 3. Email Templates → Create New Template:
-//      Subject: 🍸 Kokteyl Oyu: {{voter}}
-//      Body:
-//        Oy veren: {{voter}}
-//        Seçimler: {{choices}}
-//        Zaman: {{time}}
-// 4. Aşağıdaki 3 değeri doldur:
-
 const EMAILJS_PUBLIC_KEY  = 'DDJeUgA08efhrrIPp';
 const EMAILJS_SERVICE_ID  = 'service_vkb7jry';
 const EMAILJS_TEMPLATE_ID = 'template_cohm3z2';
 
 // ════════════════════════════════════
-// 🔐 ŞİFRE SİSTEMİ
+// 🔐 ŞİFRELER
 // ════════════════════════════════════
 const PASSWORDS = {
   'ARAP':     { name: 'Uygur',   greeting: 'Hoş geldin Uygur Bey, buyur içeri 🎩', admin: false },
@@ -400,65 +584,62 @@ let isAdmin = false;
 // ════════════════════════════════════
 // 🍸 KOKTEYLler
 // ════════════════════════════════════
+const BUSTED = 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖';
+
 const cocktails = [
   {
     id: 'haysiyetsiz', name: 'Haysiyetsiz',
     vibe: 'Dumanlı · Tatlı · Otsu',
     visible: ['Közlenmiş pırasa', 'Bal', 'Limon', 'Soda'],
-    surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
     secrets: ['Armut', 'Adaçayı'],
     garnish: 'Közlenmiş pırasa halkası & armut dilimi ile servis edilir',
     questions: [
-      { q: 'Fermat\'ın Son Teoremi hangi yıl kanıtlandı?', a: '1995', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' },
-      { q: '1 + 1 kaçtır? (İkili sayı sisteminde)', a: '10', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' }
+      { q: 'Fermat\'ın Son Teoremi\'ni kanıtlayan matematikçinin soyadı nedir?', a: 'wiles' },
+      { q: 'Riemann Hipotezi hangi matematik dalıyla ilgilidir: Cebir, Analiz, Topoloji?', a: 'analiz' }
     ]
   },
   {
     id: 'edepsiz', name: 'Edepsiz',
     vibe: 'Baharatlı · Ekşi · Cesur',
     visible: ['Közlenmiş kırmızı biber', 'Bal', 'Limon', 'Soda'],
-    surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
     secrets: ['Zencefil', 'Nar'],
     garnish: 'Biber dilimi & limon kabuğu ile servis edilir',
     questions: [
-      { q: 'Poincaré Varsayımı\'nı kanıtlayan matematikçi kimdir?', a: 'perelman', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' },
-      { q: 'Euler sayısı (e) virgülden sonra ilk 4 rakam nedir?', a: '7182', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' }
+      { q: 'Poincaré Varsayımı\'nı kanıtlayıp Fields Madalyası\'nı reddeden matematikçinin soyadı?', a: 'perelman' },
+      { q: 'Hilbert\'in 1900\'de sunduğu ünlü çözülmemiş problemler listesinde kaç problem vardı?', a: '23' }
     ]
   },
   {
     id: 'yuzsuz', name: 'Yüzsüz',
     vibe: 'Kremamsı · Sıcak · Yoğun',
     visible: ['Tahin', 'Bal', 'Limon'],
-    surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
     secrets: ['Muz', 'Tarçın'],
     garnish: 'Tahin çizgisi & bal damlası ile servis edilir',
     questions: [
-      { q: 'Dört renk teoremi ilk bilgisayarla kanıtlanan teorem mi? (Evet/Hayır)', a: 'evet', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' },
-      { q: 'Pi sayısının virgülden sonra ilk 5 rakamı nedir?', a: '14159', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' }
+      { q: 'Gödel\'in Eksiklik Teoremi hangi alanda devrim yarattı: Geometri, Mantık, İstatistik?', a: 'mantık' },
+      { q: 'Collatz Varsayımı\'nda başlangıç sayısı tek ise ne yapılır: 3n+1 mi, 2n+1 mi?', a: '3n+1' }
     ]
   },
   {
     id: 'arsiz', name: 'Arsız',
     vibe: 'Toprak · Ekşi · Dumanlı',
     visible: ['Pancar', 'Portakal', 'Limon', 'Soda'],
-    surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
     secrets: ['Yakılmış biberiye', 'Akçaağaç şurubu'],
     garnish: 'Portakal dilimi & pancar şeridi ile servis edilir',
     questions: [
-      { q: 'Kepler Varsayımı neyin en verimli dizilimini kanıtlar?', a: 'küre', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' },
-      { q: 'Sonsuz sayıda asal sayı olduğunu ilk kanıtlayan kimdir?', a: 'öklid', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' }
+      { q: 'Dört Renk Teoremi\'ne göre herhangi bir harita en az kaç renkle boyanabilir?', a: '4' },
+      { q: 'Cantor\'un çaprazlama kanıtı neyin sayılamaz olduğunu gösterir: Rasyonel sayılar mı, Reel sayılar mı?', a: 'reel' }
     ]
   },
   {
     id: 'terbiyesiz', name: 'Terbiyesiz',
     vibe: 'Kremamsı · Taze · Meyveli',
     visible: ['Avokado', 'Böğürtlen', 'Limon', 'Soda'],
-    surprise: ['🔒 Sürpriz #1', '🔒 Sürpriz #2'],
     secrets: ['Nane', 'Bal'],
     garnish: 'Böğürtlen & limon kabuğu ile servis edilir',
     questions: [
-      { q: 'Goldbach Varsayımı\'na göre her çift sayı neyin toplamıdır?', a: 'asal', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' },
-      { q: 'Karekök 2 irrasyonel midir? (Evet/Hayır)', a: 'evet', fake: 'Bravo, cidden çok iyi yapay zeka kullanıyorsun. Sürpriz dediysek sürpriz 🤖' }
+      { q: 'P vs NP problemi hangi alanın en büyük açık sorusudur: Fizik, Bilgisayar Bilimi, Biyoloji?', a: 'bilgisayar' },
+      { q: 'Nash Dengesi hangi alanla ilgilidir: Oyun Teorisi, Kaos Teorisi, Küme Teorisi?', a: 'oyun' }
     ]
   }
 ];
@@ -538,10 +719,11 @@ function openQuiz(cocktailId, surpriseIndex) {
 
   document.getElementById('quizQuestion').textContent = c.questions[surpriseIndex].q;
   document.getElementById('quizInput').value = '';
-  document.getElementById('quizResult').className = 'quiz-result';
-  document.getElementById('quizResult').textContent = '';
+  const result = document.getElementById('quizResult');
+  result.className = 'quiz-result';
+  result.textContent = '';
   document.getElementById('quizModal').classList.add('show');
-  setTimeout(() => document.getElementById('quizInput').focus(), 100);
+  setTimeout(() => document.getElementById('quizInput').focus(), 150);
 }
 
 function checkQuiz() {
@@ -553,8 +735,7 @@ function checkQuiz() {
   if (!answer) return;
 
   if (answer.includes(q.a.toLowerCase())) {
-    // Doğru cevap = yapay zeka kullanıyor!
-    result.textContent = q.fake;
+    result.textContent = BUSTED;
     result.className = 'quiz-result busted';
   } else {
     result.textContent = 'Yanlış cevap! Sürpriz malzeme gizli kalıyor 🤷';
@@ -568,9 +749,11 @@ function closeQuiz() {
   currentQuizIndex = null;
 }
 
-// Quiz input'ta Enter ile cevaplama
 document.getElementById('quizInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkQuiz(); });
 
+// ════════════════════════════════════
+// SELECTION
+// ════════════════════════════════════
 function toggle(id) {
   if (selected.has(id)) selected.delete(id);
   else if (selected.size < MAX) selected.add(id);
@@ -603,14 +786,12 @@ async function handleSubmit() {
   const now = new Date().toLocaleString('tr-TR');
 
   try {
-    if (EMAILJS_PUBLIC_KEY !== 'BURAYA_PUBLIC_KEY') {
-      emailjs.init(EMAILJS_PUBLIC_KEY);
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        voter: currentVoter,
-        choices: choices.join(', '),
-        time: now
-      });
-    }
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      voter: currentVoter,
+      choices: choices.join(', '),
+      time: now
+    });
   } catch (e) {
     console.error('EmailJS error:', e);
   }
